@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.spaetimc.R
+import com.spaetimc.domain.ScanProductUseCase
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
@@ -15,6 +16,9 @@ class MainActivity : AppCompatActivity(), ProductListAdapter.ProductListCallback
 
     @Inject
     lateinit var linearLayoutManager: LinearLayoutManager
+
+    @Inject
+    lateinit var scanProductUsecase: ScanProductUseCase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
