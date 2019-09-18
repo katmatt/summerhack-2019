@@ -1,7 +1,7 @@
 package com.spaetimc.di
 
-import com.spaetimc.MainActivity
-import com.spaetimc.MainActivityModule
+import com.spaetimc.scan.MainActivity
+import com.spaetimc.scan.MainActivityModule
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import javax.inject.Scope

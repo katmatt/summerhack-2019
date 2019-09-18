@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/product_list_card_margin_start_end"
+    android:layout_marginTop="@dimen/product_list_card_margin_top"
+    android:layout_marginEnd="@dimen/product_list_card_margin_start_end"
+    android:layout_marginBottom="@dimen/product_list_card_margin_bottom">
+
+    <TextView
+        android:id="@+id/resultTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textStyle="bold"
+        tools:text="..." />
+
+</androidx.cardview.widget.CardView>
