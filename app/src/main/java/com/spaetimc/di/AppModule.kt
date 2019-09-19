@@ -1,16 +1,12 @@
 package com.spaetimc.di
 
 import com.commercetools.client.ApiRoot
-import com.spaetimc.data.GodRepository
-import com.spaetimc.data.GodRepositoryImpl
 import com.spaetimc.utils.AppProject
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import io.reactivex.disposables.CompositeDisposable
 import io.vrap.rmf.base.client.VrapHttpClient
 import io.vrap.rmf.base.client.middlewares.HttpMiddleware
-import io.vrap.rmf.base.client.middlewares.LoggerMiddleware
 import io.vrap.rmf.base.client.oauth2.ClientCredentialsTokenSupplier
 import io.vrap.rmf.impl.okhttp.VrapOkhttpClient
 import javax.inject.Named
@@ -21,6 +17,7 @@ internal class AppModule {
 
     @Provides
     fun provideCompositeDisposables() = CompositeDisposable()
+
     @Provides
     @Singleton
     fun getHttpClient(): VrapHttpClient = VrapOkhttpClient()
@@ -44,7 +41,7 @@ internal class AppModule {
     @Singleton
     @Named("scopes")
     fun getScopes(
-        @Named("project_key") project_key:String
+        @Named("project_key") project_key: String
     ): String = "manage_project:$project_key"
 
     @Provides
@@ -55,21 +52,16 @@ internal class AppModule {
         @Named("client_secret") client_secret: String,
         @Named("project_key") project_key: String,
         @Named("scopes") scopes: String
-    ): AppProject {
-        val httpMiddleware = HttpMiddleware(
-            "https://api.sphere.io",
-            vrapHttpClient,
-            ClientCredentialsTokenSupplier(
-                client_id,
-                client_secret,
-                scopes,
-                "https://auth.sphere.io/oauth/token",
-                vrapHttpClient
-            )
+    ): AppProject = HttpMiddleware(
+        "https://api.sphere.io",
+        vrapHttpClient,
+        ClientCredentialsTokenSupplier(
+            client_id,
+            client_secret,
+            scopes,
+            "https://auth.sphere.io/oauth/token",
+            vrapHttpClient
         )
-        return ApiRoot.fromMiddlewares(httpMiddleware).withProjectKey(project_key)
-    }
-
-
+    ).let { httpMiddleware -> ApiRoot.fromMiddlewares(httpMiddleware).withProjectKey(project_key) }
 
 }
