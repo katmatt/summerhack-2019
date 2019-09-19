@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.commercetools.models.product.ProductVariant
 import com.spaetimc.R
 import com.spaetimc.domain.ScanProductUseCase
+import com.spaetimc.presentation.scan.model.AppProduct
 import com.spaetimc.presentation.scan.productlist.ProductListAdapter
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_scan.*
@@ -40,7 +42,7 @@ class ScanActivity : AppCompatActivity(), ScanContract.ScanView {
 
     override fun initScanner(): Unit = Unit // TODO
 
-    override fun updateProductList(productList: List<String>) {
+    override fun updateProductList(productList: List<AppProduct>) {
         productListAdapter.productList = productList
     }
 

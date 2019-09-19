@@ -29,9 +29,8 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
             android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/productPrice"
             app:layout_constraintEnd_toStartOf="@id/buttonContainer"
             app:layout_constraintStart_toEndOf="@id/productPicture"
             app:layout_constraintTop_toTopOf="parent">
@@ -41,6 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
+                android:layout_marginBottom="8dp"
                 android:maxLines="1"
                 android:textStyle="bold"
                 tools:text="..." />
@@ -50,10 +50,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
+                android:layout_marginBottom="16dp"
                 android:maxLines="2"
                 tools:text="..." />
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/productPrice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="8dp"
+            android:maxLines="2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/buttonContainer"
+            app:layout_constraintStart_toEndOf="@+id/productPicture"
+            tools:text="..." />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/buttonContainer"

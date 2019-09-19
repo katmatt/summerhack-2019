@@ -1,6 +1,8 @@
 package com.spaetimc.presentation.scan
 
+import com.commercetools.models.product.ProductVariant
 import com.spaetimc.domain.ScanProductUseCase
+import com.spaetimc.presentation.scan.model.AppProduct
 import com.spaetimc.presentation.scan.productlist.ProductListListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -16,7 +18,7 @@ class ScanPresenter @Inject constructor(
     private val compositeDisposable: CompositeDisposable
 ) : ScanContract.ScanPresenter, ProductListListener {
 
-    private var productList by Delegates.observable(emptyList<String>()) { _, _, newProductList ->
+    private var productList by Delegates.observable(emptyList<AppProduct>()) { _, _, newProductList ->
         scanView.updateProductList(newProductList)
     }
 
