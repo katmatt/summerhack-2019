@@ -8,7 +8,7 @@ import dagger.Provides
 import io.reactivex.disposables.CompositeDisposable
 
 @Module
-class CheckActivityModule {
+class CheckoutActivityModule {
 
     @Provides
     fun provideCheckoutPresenter(
