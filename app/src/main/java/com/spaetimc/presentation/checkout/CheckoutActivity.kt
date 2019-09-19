@@ -20,6 +20,7 @@ class CheckoutActivity : AppCompatActivity(), CheckoutContract.CheckoutView {
         setContentView(R.layout.activity_checkout)
 
         checkoutText.text = "Your order with the number $orderNumber has successfully been set."
+        backButton.setOnClickListener { onBackPressed() }
 
         checkoutPresenter.start()
     }
