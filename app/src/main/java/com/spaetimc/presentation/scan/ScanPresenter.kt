@@ -1,5 +1,6 @@
 package com.spaetimc.presentation.scan
 
+import com.google.zxing.Result
 import com.spaetimc.domain.ScanProductUseCase
 import com.spaetimc.presentation.scan.model.AppProduct
 import com.spaetimc.presentation.scan.productlist.ProductListListener
@@ -25,19 +26,28 @@ class ScanPresenter @Inject constructor(
         scanView.initializeProductList()
         scanView.initOnClickListners()
         scanView.initScanner()
-        startScanner()
     }
 
-    private fun startScanner() {
-        scanProductUseCase.scanProduct()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onNext = { product -> productList += product },
-                onError = { scanView.showMessage("Something went wrong, try again") }
-            )
-            .addTo(compositeDisposable)
+    override fun handleNewBarcode(barcode: Result?) {
+        barcode?.text?.let { code ->
+            scanProductUseCase.getProduct(code)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onSuccess = { product ->
+                        scanView.reStartCamera()
+                        productList += product
+                    },
+                    onComplete = {
+                        scanView.reStartCamera()
+                        scanView.showMessage("Sorry, no product found for this barcode.")
+                    },
+                    onError = { scanView.showMessage("Something went wrong, try again.") }
+                )
+                .addTo(compositeDisposable)
+        }
     }
+
 
     override fun onPlusButtonClicked(product: AppProduct) = Unit // TODO("not implemented")
 
@@ -48,5 +58,9 @@ class ScanPresenter @Inject constructor(
     override fun cancelOrder() = Unit // TODO("not implemented")
 
     override fun stop() = compositeDisposable.dispose()
+
+    companion object {
+        private const val TAG = "ScanPresenter"
+    }
 
 }
