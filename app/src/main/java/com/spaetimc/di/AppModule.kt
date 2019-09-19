@@ -1,6 +1,7 @@
 package com.spaetimc.di
 
 import com.commercetools.client.ApiRoot
+import com.spaetimc.utils.AppProject
 import dagger.Module
 import dagger.Provides
 import io.reactivex.disposables.CompositeDisposable
@@ -16,7 +17,6 @@ internal class AppModule {
 
     @Provides
     fun provideCompositeDisposables() = CompositeDisposable()
-
     @Provides
     @Singleton
     fun getHttpClient(): VrapHttpClient = VrapOkhttpClient()
@@ -33,15 +33,15 @@ internal class AppModule {
 
     @Provides
     @Singleton
-    @Named("project")
-    fun getProject(): String = ""
+    @Named("project_key")
+    fun getProjectKey(): String = ""
 
     @Provides
     @Singleton
     @Named("scopes")
     fun getScopes(
-        @Named("project_name") project_name:String
-    ): String = "manage_project:$project_name"
+        @Named("project_key") project_key:String
+    ): String = "manage_project:$project_key"
 
     @Provides
     @Singleton
@@ -49,8 +49,9 @@ internal class AppModule {
         vrapHttpClient: VrapHttpClient,
         @Named("client_id") client_id: String,
         @Named("client_secret") client_secret: String,
+        @Named("project_key") project_key: String,
         @Named("scopes") scopes: String
-    ): ApiRoot {
+    ): AppProject {
         val httpMiddleware = HttpMiddleware(
             "https://api.sphere.io",
             vrapHttpClient,
@@ -62,7 +63,7 @@ internal class AppModule {
                 vrapHttpClient
             )
         )
-        return ApiRoot.fromMiddlewares(httpMiddleware)
+        return ApiRoot.fromMiddlewares(httpMiddleware).withProjectKey(project_key)
     }
 
 }
