@@ -1,6 +1,7 @@
 package com.spaetimc.presentation.scan
 
 import com.spaetimc.domain.ScanProductUseCase
+import com.spaetimc.presentation.scan.productlist.ProductListListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo

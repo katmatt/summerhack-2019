@@ -1,4 +1,4 @@
-package com.spaetimc.presentation.scan
+package com.spaetimc.presentation.scan.productlist
 
 import android.view.LayoutInflater
 import android.view.View
@@ -21,7 +21,7 @@ class ProductListAdapter @Inject constructor(
     }
 
     inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        val title: TextView = view.resultTitle
+        val title: TextView = view.productName
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = LayoutInflater

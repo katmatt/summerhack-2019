@@ -6,8 +6,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.spaetimc.R
 import com.spaetimc.domain.ScanProductUseCase
+import com.spaetimc.presentation.scan.productlist.ProductListAdapter
 import dagger.android.AndroidInjection
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_scan.*
 import javax.inject.Inject
 
 class ScanActivity : AppCompatActivity(), ScanContract.ScanView {
@@ -27,16 +28,14 @@ class ScanActivity : AppCompatActivity(), ScanContract.ScanView {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_scan)
 
         scanPresenter.start()
     }
 
-    override fun initializeProductlist() {
-        with(productList) {
-            layoutManager = linearLayoutManager
-            adapter = productListAdapter
-        }
+    override fun initializeProductlist() = with(productList) {
+        layoutManager = linearLayoutManager
+        adapter = productListAdapter
     }
 
     override fun initScanner(): Unit = Unit // TODO
