@@ -11,8 +11,6 @@ interface ScanContract {
 
         fun initializeProductList()
 
-        fun initScanner()
-
         fun updateProductList(productList: List<AppProduct>)
 
         fun initOnClickListners()

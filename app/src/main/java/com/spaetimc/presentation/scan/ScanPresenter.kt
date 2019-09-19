@@ -18,14 +18,13 @@ class ScanPresenter @Inject constructor(
     private val compositeDisposable: CompositeDisposable
 ) : ScanContract.ScanPresenter, ProductListListener {
 
-    private var productList by Delegates.observable(emptyList<AppProduct>()) { property, _, newProductList ->
+    private var productList by Delegates.observable(emptyList<AppProduct>()) { _, _, newProductList ->
         scanView.updateProductList(newProductList)
     }
 
-    override fun start() {
-        scanView.initializeProductList()
-        scanView.initOnClickListners()
-        scanView.initScanner()
+    override fun start() = with(scanView) {
+        initializeProductList()
+        initOnClickListners()
     }
 
     override fun handleNewBarcode(barcode: Result?) {
@@ -36,7 +35,8 @@ class ScanPresenter @Inject constructor(
                 .subscribeBy(
                     onSuccess = { product ->
                         scanView.reStartCamera()
-                        productList += product
+                        if (productList.any { it.barcodeValue == product.barcodeValue }) onPlusButtonClicked(product)
+                        else productList = productList + product
                     },
                     onComplete = {
                         scanView.reStartCamera()
@@ -49,20 +49,24 @@ class ScanPresenter @Inject constructor(
     }
 
     override fun onPlusButtonClicked(product: AppProduct) {
-        val produit = productList
-            .find { it.barcodeValue == product.barcodeValue }
-            ?.copy(amount = product.amount + 1)
-            ?.also { updatedProduct ->
-                productList = productList - product + updatedProduct
-            }
+        productList = productList
+            .filterNot { it.barcodeValue == product.barcodeValue }
+            .plus(product.copy(amount = product.amount + 1))
     }
 
-
-    override fun onMinusButtonClicked(product: AppProduct) = Unit // TODO("not implemented")
+    override fun onMinusButtonClicked(product: AppProduct) {
+        productList =
+            if (product.amount <= 1) productList - product
+            else productList
+                .filterNot { it.barcodeValue == product.barcodeValue }
+                .plus(product.copy(amount = product.amount - 1))
+    }
 
     override fun checkout() = Unit // TODO("not implemented")
 
-    override fun cancelOrder() = Unit // TODO("not implemented")
+    override fun cancelOrder() {
+        productList = emptyList()
+    }
 
     override fun stop() = compositeDisposable.dispose()
 
