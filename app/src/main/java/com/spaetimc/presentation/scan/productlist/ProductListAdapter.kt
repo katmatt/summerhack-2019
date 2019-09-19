@@ -18,12 +18,7 @@ class ProductListAdapter @Inject constructor(
 
     var productList by Delegates.observable(emptyList<AppProduct>()) { _, _, _ -> notifyDataSetChanged() }
 
-    private val onCardClickListener: View.OnClickListener by lazy { View.OnClickListener { productListListener.doStuff() } }
-    private val onPlusButtonClickListener: View.OnClickListener by lazy { View.OnClickListener { productListListener.doStuff() } }
-    private val onMinusButtonClickListener: View.OnClickListener by lazy { View.OnClickListener { productListListener.doStuff() } }
-
-
-    inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val productName: TextView = view.productName
         val productDescription: TextView = view.productDescription
         val productPrice: TextView = view.productPrice
@@ -39,16 +34,18 @@ class ProductListAdapter @Inject constructor(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) =
         with(holder) {
-            with(view) {
-                tag = productName
-                setOnClickListener(onCardClickListener)
-            }
             productName.text = productList[position].name
             productDescription.text = productList[position].description
             productPrice.text = productList[position].price
             productCounter.text = productList[position].amount.toString()
-            plusButton.setOnClickListener(onPlusButtonClickListener)
-            minusButton.setOnClickListener(onMinusButtonClickListener)
+            plusButton.setOnClickListener { productListListener.onPlusButtonClicked(productList[position]) }
+            minusButton.setOnClickListener { productListListener.onMinusButtonClicked(productList[position]) }
+
+            // leave it here for the moment for later use, when there is a product page
+//            with(view) {
+//                tag = productName
+//                setOnClickListener { productListListener.doStuff() }
+//            }
         }
 
     override fun getItemCount() = productList.size

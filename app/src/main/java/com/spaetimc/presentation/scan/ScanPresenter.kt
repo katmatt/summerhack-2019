@@ -1,6 +1,5 @@
 package com.spaetimc.presentation.scan
 
-import com.commercetools.models.product.ProductVariant
 import com.spaetimc.domain.ScanProductUseCase
 import com.spaetimc.presentation.scan.model.AppProduct
 import com.spaetimc.presentation.scan.productlist.ProductListListener
@@ -39,7 +38,9 @@ class ScanPresenter @Inject constructor(
             .addTo(compositeDisposable)
     }
 
-    override fun doStuff(): Unit = TODO("just to prepare for callbacks from clicks of the product list")
+    override fun onPlusButtonClicked(product: AppProduct) = Unit // TODO("not implemented")
+
+    override fun onMinusButtonClicked(product: AppProduct) = Unit // TODO("not implemented")
 
     override fun stop() = compositeDisposable.dispose()
 

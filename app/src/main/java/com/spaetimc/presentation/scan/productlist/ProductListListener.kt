@@ -1,5 +1,11 @@
 package com.spaetimc.presentation.scan.productlist
 
+import com.spaetimc.presentation.scan.model.AppProduct
+
 interface ProductListListener {
-    fun doStuff()
+
+    fun onPlusButtonClicked(product: AppProduct)
+
+    fun onMinusButtonClicked(product: AppProduct)
+
 }
