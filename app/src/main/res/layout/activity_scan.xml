@@ -14,30 +14,48 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:layout_constraintBottom_toTopOf="@+id/scannedProductsHeader"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textView"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/scannedProductsHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="2dp"
-        android:layout_marginBottom="2dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:background="#8E8A98"
-        android:fontFamily="@font/roboto_medium"
-        android:padding="8dp"
-        android:text="Scanned products"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="#000000"
         app:layout_constraintBottom_toTopOf="@+id/scrollView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/scannerView" />
+        app:layout_constraintTop_toBottomOf="@id/scannerView">
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_scan_code"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_medium"
+            android:padding="8dp"
+            android:text="@string/activity_scan_scanned_products"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="#000000"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imageView2"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -48,7 +66,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView">
+        app:layout_constraintTop_toBottomOf="@id/scannedProductsHeader">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/productList"
@@ -64,7 +82,7 @@
         android:id="@+id/checkoutBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#BF2A2B40"
+        android:background="#A82A2B40"
         android:backgroundTint="#BF2A2B40"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -80,13 +98,12 @@
             android:background="#4CB196"
             android:backgroundTint="#4CB196"
             android:fontFamily="@font/roboto_medium"
-            android:text="Buy Now"
+            android:text="@string/activity_scan_button_buy_now"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="ContentDescription" />
-
 
         <TextView
             android:id="@+id/totalView"
@@ -94,12 +111,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="4dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:background="#ffffff"
             android:backgroundTint="#ffffff"
             android:fontFamily="@font/roboto_medium"
-            android:text="Total 0,00€"
+            android:text="@string/activity_scan_text_sum"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="#000000"
@@ -107,7 +124,7 @@
             app:layout_constraintEnd_toStartOf="@+id/checkoutButton"
             app:layout_constraintStart_toEndOf="@id/cancelButton"
             app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription,HardcodedText" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/cancelButton"
@@ -119,7 +136,7 @@
             android:background="#EA7075"
             android:backgroundTint="#EA7075"
             android:fontFamily="@font/roboto_medium"
-            android:text="Cancel"
+            android:text="@string/activity_scan_button_cancel"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

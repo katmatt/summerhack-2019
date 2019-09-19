@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">spaetimc</string>
     <string name="title_activity_checkout">CheckoutActivity</string>
+    <string name="activity_scan_scanned_products">Scanned products</string>
+    <string name="activity_scan_button_buy_now">Buy Now</string>
+    <string name="activity_scan_text_sum">Total 0,00€</string>
+    <string name="activity_scan_button_cancel">Cancel</string>
 </resources>
