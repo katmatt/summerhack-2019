@@ -1,0 +1,9 @@
+package com.spaetimc.presentation.scan.model
+
+data class AppProduct(
+    val name: String,
+    val description: String,
+    val price: String,
+    val pictureUrl: String,
+    val amount: Int = 1
+)

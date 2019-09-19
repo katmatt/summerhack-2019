@@ -3,6 +3,7 @@ package com.spaetimc.presentation.scan
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.spaetimc.domain.ScanProductUseCase
 import com.spaetimc.domain.ScanProductUseCaseImpl
+import com.spaetimc.presentation.scan.productlist.ProductListListener
 import dagger.Module
 import dagger.Provides
 import io.reactivex.disposables.CompositeDisposable
