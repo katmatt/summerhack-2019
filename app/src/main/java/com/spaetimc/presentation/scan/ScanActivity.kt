@@ -35,9 +35,14 @@ class ScanActivity : AppCompatActivity(), ScanContract.ScanView {
         scanPresenter.start()
     }
 
-    override fun initializeProductlist() = with(productList) {
+    override fun initializeProductList() = with(productList) {
         layoutManager = linearLayoutManager
         adapter = productListAdapter
+    }
+
+    override fun initOnClickListners() {
+        checkoutButton.setOnClickListener { scanPresenter.checkout() }
+        cancelButton.setOnClickListener { scanPresenter.cancelOrder() }
     }
 
     override fun initScanner(): Unit = Unit // TODO
