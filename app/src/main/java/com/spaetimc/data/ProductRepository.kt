@@ -10,8 +10,8 @@ interface ProductRepository {
 
     fun getAppProduct(barCode: String): Maybe<AppProduct>
 
-    fun createCart(): Single<Cart>
+    fun createCart(appProducts: List<AppProduct>): Single<Cart>
 
-    fun makeOrder(cartId: String): Single<Order>
+    fun makeOrder(appProducts: List<AppProduct>): Single<Order>
 
 }
