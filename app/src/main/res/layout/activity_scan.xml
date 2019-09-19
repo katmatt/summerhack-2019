@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#2A2B40"
     tools:context=".presentation.scan.ScanActivity">
 
     <me.dm7.barcodescanner.zxing.ZXingScannerView
@@ -24,6 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
         android:background="#8E8A98"
         app:layout_constraintBottom_toTopOf="@+id/scrollView"
@@ -116,9 +118,9 @@
             android:background="#ffffff"
             android:backgroundTint="#ffffff"
             android:fontFamily="@font/roboto_medium"
+            android:gravity="center_vertical"
             android:text="@string/activity_scan_text_sum"
             android:textAlignment="center"
-            android:gravity="center_vertical"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="#000000"
             app:layout_constraintBottom_toBottomOf="parent"
