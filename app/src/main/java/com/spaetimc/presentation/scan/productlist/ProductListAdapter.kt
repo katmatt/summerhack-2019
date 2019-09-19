@@ -4,10 +4,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.spaetimc.R
 import com.spaetimc.presentation.scan.model.AppProduct
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.product_list_entry.view.*
 import javax.inject.Inject
 import kotlin.properties.Delegates
@@ -19,6 +21,7 @@ class ProductListAdapter @Inject constructor(
     var productList by Delegates.observable(emptyList<AppProduct>()) { _, _, _ -> notifyDataSetChanged() }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val productImage: ImageView = view.productImage
         val productName: TextView = view.productName
         val productDescription: TextView = view.productDescription
         val productPrice: TextView = view.productPrice
@@ -34,6 +37,10 @@ class ProductListAdapter @Inject constructor(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) =
         with(holder) {
+            Picasso.get()
+                .load(productList[position].pictureUrl)
+                .into(productImage)
+
             productName.text = productList[position].name
             productDescription.text = productList[position].description
             productPrice.text = productList[position].price

@@ -11,6 +11,7 @@ import dagger.android.AndroidInjectionModule
 import io.reactivex.Single
 import javax.inject.Singleton
 
+
 @Singleton
 @Component(
     modules = [
@@ -18,6 +19,7 @@ import javax.inject.Singleton
         AppAbstractModule::class
     ]
 )
+
 interface TestComponent {
 
     fun getGodRepository(): GodRepository

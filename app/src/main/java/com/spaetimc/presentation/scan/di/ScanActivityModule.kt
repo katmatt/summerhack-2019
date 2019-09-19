@@ -1,8 +1,11 @@
-package com.spaetimc.presentation.scan
+package com.spaetimc.presentation.scan.di
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.spaetimc.domain.ScanProductUseCase
 import com.spaetimc.domain.ScanProductUseCaseImpl
+import com.spaetimc.presentation.scan.ScanActivity
+import com.spaetimc.presentation.scan.ScanContract
+import com.spaetimc.presentation.scan.ScanPresenter
 import com.spaetimc.presentation.scan.productlist.ProductListListener
 import dagger.Module
 import dagger.Provides
@@ -23,7 +26,8 @@ class ScanActivityModule {
         scanActivity: ScanActivity,
         scanProductUseCase: ScanProductUseCase,
         compositeDisposable: CompositeDisposable
-    ): ScanContract.ScanPresenter = ScanPresenter(scanActivity, scanProductUseCase, compositeDisposable)
+    ): ScanContract.ScanPresenter =
+        ScanPresenter(scanActivity, scanProductUseCase, compositeDisposable)
 
     @Provides
     fun provideScanView(scanActivity: ScanActivity): ScanContract.ScanView = scanActivity
