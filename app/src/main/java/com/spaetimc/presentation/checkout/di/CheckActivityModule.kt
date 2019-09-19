@@ -1,6 +1,5 @@
 package com.spaetimc.presentation.checkout.di
 
-import com.spaetimc.domain.ScanProductUseCase
 import com.spaetimc.presentation.checkout.CheckoutActivity
 import com.spaetimc.presentation.checkout.CheckoutContract
 import com.spaetimc.presentation.checkout.CheckoutPresenter
@@ -16,4 +15,5 @@ class CheckActivityModule {
         checkoutActivity: CheckoutActivity,
         compositeDisposable: CompositeDisposable
     ): CheckoutContract.CheckoutPresenter = CheckoutPresenter(checkoutActivity, compositeDisposable)
+
 }

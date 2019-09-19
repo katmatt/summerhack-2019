@@ -1,5 +1,6 @@
 package com.spaetimc.presentation.scan
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -7,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.zxing.Result
 import com.spaetimc.R
 import com.spaetimc.domain.ScanProductUseCase
+import com.spaetimc.presentation.checkout.CheckoutActivity
 import com.spaetimc.presentation.scan.model.AppProduct
 import com.spaetimc.presentation.scan.productlist.ProductListAdapter
 import dagger.android.AndroidInjection
@@ -26,7 +28,7 @@ class ScanActivity : AppCompatActivity(), ScanContract.ScanView, ZXingScannerVie
     lateinit var linearLayoutManager: LinearLayoutManager
 
     @Inject
-    lateinit var scanProductUsecase: ScanProductUseCase
+    lateinit var scanProductUseCase: ScanProductUseCase
 
     private var cameraId: Int = -1
 
@@ -70,6 +72,10 @@ class ScanActivity : AppCompatActivity(), ScanContract.ScanView, ZXingScannerVie
 
     override fun reStartCamera() = scannerView.resumeCameraPreview(this)
 
+    override fun showCheckoutScreen(orderNumber: String) =
+        Intent(this, CheckoutActivity::class.java)
+            .also { it.putExtra("orderNumber", orderNumber) }
+            .let { intent -> startActivity(intent) }
 
     override fun updateProductList(productList: List<AppProduct>) {
         productListAdapter.productList = productList
