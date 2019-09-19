@@ -1,6 +1,11 @@
 package com.spaetimc.utils
 
 import com.commercetools.client.ByProjectKeyRequestBuilder
+import com.commercetools.models.cart.Cart
+import com.commercetools.models.cart.LineItemDraft
+import com.commercetools.models.cart.LineItemDraftImpl
+import com.commercetools.models.order.OrderFromCartDraft
+import com.commercetools.models.order.OrderFromCartDraftImpl
 import com.commercetools.models.product.Product
 import com.spaetimc.presentation.scan.model.AppProduct
 
@@ -22,4 +27,19 @@ fun Product.priceAsString(): String {
         return "Price not available"
     }
     return "${this.masterData.current.masterVariant.prices[0].value.centAmount / 100} ${this.masterData.current.masterVariant.prices[0].value.currencyCode}"
+}
+
+fun AppProduct.toLineItemDraft(): LineItemDraft {
+    val lineItemDraft = LineItemDraftImpl()
+    lineItemDraft.sku = this.barcodeValue
+    lineItemDraft.quantity = this.amount.toLong()
+    return lineItemDraft
+}
+
+fun Cart.toOrderDraft(): OrderFromCartDraft {
+    val orderDraft = OrderFromCartDraftImpl()
+    orderDraft.id = this.id
+    orderDraft.version = this.version
+    orderDraft.orderNumber = this.id
+    return orderDraft
 }
