@@ -13,12 +13,16 @@ buildscript {
 
 }
 
+ext {
+    sdkVersion = "1.0.0-20190918102253"
+}
+
 allprojects {
     repositories {
         google()
         jcenter()
         maven {
-            url "https://dl.bintray.com/vrapio/vrapio"
+            url "https://dl.bintray.com/commercetools/maven"
         }
     }
 }
