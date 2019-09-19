@@ -50,8 +50,9 @@ class GodRepositoryImpl @Inject constructor(val appProject: AppProject) : GodRep
     }
 
     override fun getMainCustomer(): Single<Customer> = getCustomer()
-        .switchIfEmpty(getCustomer())
-        .toSingle()
+        .switchIfEmpty(
+            createCustomer()
+        )
 
     override fun getProductVariant(barCode: String): Single<ProductVariant> = TODO("not implemented")
 
