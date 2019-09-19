@@ -1,6 +1,7 @@
 package com.spaetimc.presentation.scan.di
 
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.spaetimc.data.ProductRepository
 import com.spaetimc.domain.CheckoutUseCase
 import com.spaetimc.domain.CheckoutUseCaseImpl
 import com.spaetimc.domain.ScanProductUseCase
@@ -17,11 +18,10 @@ import io.reactivex.disposables.CompositeDisposable
 class ScanActivityModule {
 
     @Provides
-    fun providesScanProductUsecase(scanProductUseCaseImpl: ScanProductUseCaseImpl): ScanProductUseCase =
-        scanProductUseCaseImpl
+    fun providesScanProductUseCase(productRepository: ProductRepository): ScanProductUseCase = ScanProductUseCaseImpl(productRepository)
 
     @Provides
-    fun providesScanCheckoutUseCase(checkoutUseCaseImpl : CheckoutUseCaseImpl): CheckoutUseCase =
+    fun providesScanCheckoutUseCase(checkoutUseCaseImpl: CheckoutUseCaseImpl): CheckoutUseCase =
         checkoutUseCaseImpl
 
     @Provides
@@ -33,8 +33,7 @@ class ScanActivityModule {
         scanProductUseCase: ScanProductUseCase,
         checkoutUseCase: CheckoutUseCase,
         compositeDisposable: CompositeDisposable
-    ): ScanContract.ScanPresenter =
-        ScanPresenter(scanActivity, scanProductUseCase,checkoutUseCase, compositeDisposable)
+    ): ScanContract.ScanPresenter = ScanPresenter(scanActivity, scanProductUseCase, checkoutUseCase, compositeDisposable)
 
     @Provides
     fun provideScanView(scanActivity: ScanActivity): ScanContract.ScanView = scanActivity

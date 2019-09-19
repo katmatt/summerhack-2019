@@ -35,7 +35,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.google.android.material:material:1.1.0-alpha10'
 
-    implementation("com.commercetools:commercetools-api:${sdkVersion}")  {
+    implementation("com.commercetools:commercetools-api:${sdkVersion}") {
         exclude group: 'org.apache.logging.log4j', module: 'log4j-core'
     }
     implementation("com.commercetools:okhttp-client:${sdkVersion}") {

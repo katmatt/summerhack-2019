@@ -41,7 +41,7 @@ class ProductListAdapter @Inject constructor(
                 .load(productList[position].pictureUrl)
                 .resize(112, 112)
                 .centerCrop()
-                .placeholder(R.drawable.product_placeholder)
+                .placeholder(R.drawable.ic_placeholder_pic2)
                 .into(productImage)
 
             productName.text = productList[position].name

@@ -1,5 +1,7 @@
 package com.spaetimc.di
 
+import com.spaetimc.presentation.checkout.CheckoutActivity
+import com.spaetimc.presentation.checkout.di.CheckActivityModule
 import com.spaetimc.presentation.scan.ScanActivity
 import com.spaetimc.presentation.scan.di.ScanActivityModule
 import dagger.Module
@@ -16,5 +18,9 @@ internal abstract class ActivityModule {
     @ActivityScope
     @ContributesAndroidInjector(modules = [ScanActivityModule::class])
     abstract fun contributeScanActivity(): ScanActivity
+
+    @ActivityScope
+    @ContributesAndroidInjector(modules = [CheckActivityModule::class])
+    abstract fun contributeCheckoutActivity(): CheckoutActivity
 
 }

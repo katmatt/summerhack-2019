@@ -2,16 +2,13 @@ package com.spaetimc.presentation.scan
 
 import com.google.zxing.Result
 import com.spaetimc.domain.CheckoutUseCase
-import com.spaetimc.domain.CheckoutUseCaseImpl
 import com.spaetimc.domain.ScanProductUseCase
 import com.spaetimc.presentation.scan.model.AppProduct
 import com.spaetimc.presentation.scan.productlist.ProductListListener
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.rxkotlin.toFlowable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 import kotlin.properties.Delegates
@@ -77,6 +74,7 @@ class ScanPresenter @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onSuccess = { order ->
+                    scanView.showCheckoutScreen(order.orderNumber)
                     scanView.showMessage("order succeeded with orderNumber=\"${order.orderNumber}\"")
                 },
                 onError = { scanView.showMessage("Something went wrong, try again.") }

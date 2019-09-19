@@ -15,7 +15,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name="com.spaetimc.presentation.scan.ScanActivity">
+        <activity
+            android:name=".presentation.checkout.CheckoutActivity"
+            android:label="@string/title_activity_checkout"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".presentation.scan.ScanActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

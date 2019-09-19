@@ -17,6 +17,8 @@ interface ScanContract {
 
         fun reStartCamera()
 
+        fun showCheckoutScreen(orderNumber: String)
+
     }
 
     interface ScanPresenter : BasePresenter {
