@@ -4,7 +4,6 @@ import com.commercetools.models.cart.Cart
 import com.commercetools.models.customer.Customer
 import com.commercetools.models.customer.CustomerDraftImpl
 import com.commercetools.models.order.Order
-import com.commercetools.models.product.Product
 import com.commercetools.models.product.ProductVariant
 import com.spaetimc.presentation.scan.model.AppProduct
 import com.spaetimc.utils.AppProject
@@ -18,7 +17,7 @@ class GodRepositoryImpl @Inject constructor(val appProject: AppProject) : GodRep
 
     override fun createCustomer(): Single<Customer> {
 
-        val customerDraftImpl = CustomerDraftImpl();
+        val customerDraftImpl = CustomerDraftImpl()
         customerDraftImpl.email = "spaetimc@mc.com"
         customerDraftImpl.password = "spaetimc@mc.com"
         customerDraftImpl.firstName = "Mc"
