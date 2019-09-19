@@ -1,13 +1,17 @@
 package com.spaetimc.presentation.scan
 
 import com.google.zxing.Result
+import com.spaetimc.domain.CheckoutUseCase
+import com.spaetimc.domain.CheckoutUseCaseImpl
 import com.spaetimc.domain.ScanProductUseCase
 import com.spaetimc.presentation.scan.model.AppProduct
 import com.spaetimc.presentation.scan.productlist.ProductListListener
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.rxkotlin.toFlowable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 import kotlin.properties.Delegates
@@ -15,6 +19,7 @@ import kotlin.properties.Delegates
 class ScanPresenter @Inject constructor(
     private val scanView: ScanContract.ScanView,
     private val scanProductUseCase: ScanProductUseCase,
+    private val checkoutUseCase: CheckoutUseCase,
     private val compositeDisposable: CompositeDisposable
 ) : ScanContract.ScanPresenter, ProductListListener {
 
@@ -22,10 +27,9 @@ class ScanPresenter @Inject constructor(
         scanView.updateProductList(newProductList)
     }
 
-    override fun start() {
-        scanView.initializeProductList()
-        scanView.initOnClickListners()
-        scanView.initScanner()
+    override fun start() = with(scanView) {
+        initializeProductList()
+        initOnClickListners()
     }
 
     override fun handleNewBarcode(barcode: Result?) {
@@ -36,7 +40,8 @@ class ScanPresenter @Inject constructor(
                 .subscribeBy(
                     onSuccess = { product ->
                         scanView.reStartCamera()
-                        productList += product
+                        if (productList.any { it.barcodeValue == product.barcodeValue }) onPlusButtonClicked(product)
+                        else productList = productList + product
                     },
                     onComplete = {
                         scanView.reStartCamera()
@@ -48,14 +53,36 @@ class ScanPresenter @Inject constructor(
         }
     }
 
+    override fun onPlusButtonClicked(product: AppProduct) {
+        productList = productList
+            .filterNot { it.barcodeValue == product.barcodeValue }
+            .plus(product.copy(amount = product.amount + 1))
+    }
 
-    override fun onPlusButtonClicked(product: AppProduct) = Unit // TODO("not implemented")
+    override fun onMinusButtonClicked(product: AppProduct) {
+        productList =
+            if (product.amount <= 1) productList - product
+            else productList
+                .filterNot { it.barcodeValue == product.barcodeValue }
+                .plus(product.copy(amount = product.amount - 1))
+    }
 
-    override fun onMinusButtonClicked(product: AppProduct) = Unit // TODO("not implemented")
+    override fun checkout() {
+        checkoutUseCase.checkout(productList)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onSuccess = { order ->
+                    scanView.showMessage("order succeeded with orderNumber=\"${order.orderNumber}\"")
+                },
+                onError = { scanView.showMessage("Something went wrong, try again.") }
+            )
+            .addTo(compositeDisposable)
+    }
 
-    override fun checkout() = Unit // TODO("not implemented")
-
-    override fun cancelOrder() = Unit // TODO("not implemented")
+    override fun cancelOrder() {
+        productList = emptyList()
+    }
 
     override fun stop() = compositeDisposable.dispose()
 

@@ -66,16 +66,14 @@ class ScanActivity : AppCompatActivity(), ScanContract.ScanView, ZXingScannerVie
     override fun reStartCamera() = scannerView.resumeCameraPreview(this)
 
 
-    override fun initScanner(): Unit = Unit // TODO
-
     override fun updateProductList(productList: List<AppProduct>) {
         productListAdapter.productList = productList
     }
 
+    override fun showMessage(message: String?): Unit = Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+
     override fun showProgress(): Unit = Unit // TODO
 
     override fun hideProgress(): Unit = Unit // TODO
-
-    override fun showMessage(message: String?): Unit = Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 
 }
