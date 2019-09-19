@@ -22,7 +22,8 @@ class ScanPresenter @Inject constructor(
     }
 
     override fun start() {
-        scanView.initializeProductlist()
+        scanView.initializeProductList()
+        scanView.initOnClickListners()
         scanView.initScanner()
         startScanner()
     }
@@ -41,6 +42,10 @@ class ScanPresenter @Inject constructor(
     override fun onPlusButtonClicked(product: AppProduct) = Unit // TODO("not implemented")
 
     override fun onMinusButtonClicked(product: AppProduct) = Unit // TODO("not implemented")
+
+    override fun checkout() = Unit // TODO("not implemented")
+
+    override fun cancelOrder() = Unit // TODO("not implemented")
 
     override fun stop() = compositeDisposable.dispose()
 

@@ -39,6 +39,9 @@ class ProductListAdapter @Inject constructor(
         with(holder) {
             Picasso.get()
                 .load(productList[position].pictureUrl)
+                .resize(112, 112)
+                .centerCrop()
+                .placeholder(R.drawable.product_placeholder)
                 .into(productImage)
 
             productName.text = productList[position].name
