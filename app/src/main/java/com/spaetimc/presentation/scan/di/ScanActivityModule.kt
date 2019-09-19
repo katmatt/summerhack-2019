@@ -18,7 +18,8 @@ import io.reactivex.disposables.CompositeDisposable
 class ScanActivityModule {
 
     @Provides
-    fun providesScanProductUseCase(productRepository: ProductRepository): ScanProductUseCase = ScanProductUseCaseImpl(productRepository)
+    fun providesScanProductUseCase(productRepository: ProductRepository): ScanProductUseCase =
+        ScanProductUseCaseImpl(productRepository)
 
     @Provides
     fun providesScanCheckoutUseCase(checkoutUseCaseImpl: CheckoutUseCaseImpl): CheckoutUseCase =

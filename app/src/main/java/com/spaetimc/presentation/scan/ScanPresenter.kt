@@ -20,7 +20,7 @@ class ScanPresenter @Inject constructor(
     private val compositeDisposable: CompositeDisposable
 ) : ScanContract.ScanPresenter, ProductListListener {
 
-    private var productList by Delegates.observable(emptyList<AppProduct>()) { _, oldValue, newProductList ->
+    private var productList by Delegates.observable(emptyList<AppProduct>()) { _, _, newProductList ->
         scanView.updateProductList(newProductList.sortedByDescending { it.createdAt })
         val totalPriceInCent: Int = newProductList.sumBy { it.priceInCent * it.amount }
         scanView.updateTotalPrice(totalPriceInCent)
@@ -53,21 +53,20 @@ class ScanPresenter @Inject constructor(
     }
 
     override fun onPlusButtonClicked(product: AppProduct) {
-
-        val currentAmmount = productList.find { it.barcodeValue == product.barcodeValue }?.amount ?: 1
+        val currentAmount = productList.find { it.barcodeValue == product.barcodeValue }?.amount ?: 1
         productList = productList
             .filterNot { it.barcodeValue == product.barcodeValue }
-            .plus(product.copy(amount = currentAmmount + 1))
+            .plus(product.copy(amount = currentAmount + 1))
 
     }
 
     override fun onMinusButtonClicked(product: AppProduct) {
-        val currentAmmount = productList.find { it.barcodeValue == product.barcodeValue }?.amount ?: 1
+        val currentAmount = productList.find { it.barcodeValue == product.barcodeValue }?.amount ?: 1
         productList =
-            if (currentAmmount <= 1) productList - product
+            if (currentAmount <= 1) productList - product
             else productList
                 .filterNot { it.barcodeValue == product.barcodeValue }
-                .plus(product.copy(amount = currentAmmount - 1))
+                .plus(product.copy(amount = currentAmount - 1))
     }
 
     override fun checkout() {
@@ -86,9 +85,5 @@ class ScanPresenter @Inject constructor(
     }
 
     override fun stop() = compositeDisposable.dispose()
-
-    companion object {
-        private const val TAG = "ScanPresenter"
-    }
 
 }

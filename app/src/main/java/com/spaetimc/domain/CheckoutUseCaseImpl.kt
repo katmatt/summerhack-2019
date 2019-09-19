@@ -10,7 +10,6 @@ class CheckoutUseCaseImpl @Inject constructor(
     private val productRepository: ProductRepository
 ) : CheckoutUseCase {
 
-    override fun checkout(productList: List<AppProduct>): Single<Order> {
-        return productRepository.makeOrder(productList)
-    }
+    override fun checkout(productList: List<AppProduct>): Single<Order> = productRepository.makeOrder(productList)
+
 }

@@ -17,5 +17,4 @@ internal abstract class AppAbstractModule {
     @Binds
     abstract fun getCustomerRpository(productRepositoryImpl: CustomerRepositoryImpl): CustomerRepository
 
-
 }
