@@ -16,7 +16,7 @@ fun productToAppProduct(product: Product): AppProduct = AppProduct(
     description = product.masterData.current.description.values()["de-DE"] ?: "NO description found",
     pictureUrl = product.masterData.current.masterVariant.images[0]?.url ?: "default_url",
     priceInCent = product.masterData.current.masterVariant.prices[0].value.centAmount.toInt(),
-    barcodeValue = product.masterData.current.masterVariant.sku,
+    barcode = product.masterData.current.masterVariant.sku,
     createdAt = System.currentTimeMillis()
 )
 
@@ -32,7 +32,7 @@ fun Product.priceAsString(): String =
 
 fun AppProduct.toLineItemDraft(): LineItemDraft =
     LineItemDraftImpl().also { lineItemDraft ->
-        lineItemDraft.sku = this.barcodeValue
+        lineItemDraft.sku = this.barcode
         lineItemDraft.quantity = this.amount.toLong()
     }
 

@@ -80,14 +80,10 @@ class ScanActivity : AppCompatActivity(), ScanContract.ScanView, ZXingScannerVie
     override fun showCheckoutScreen(orderNumber: String) =
         Intent(this, CheckoutActivity::class.java)
             .also { it.putExtra("orderNumber", orderNumber) }
-            .let { intent ->
-                productListAdapter.productList = emptyList()
-                startActivity(intent)
-            }
+            .let { intent -> startActivity(intent) }
 
     override fun updateProductList(productList: List<AppProduct>) {
-        productListAdapter.productList = productList
-
+        productListAdapter.updateList(productList)
     }
 
     override fun showMessage(message: String?): Unit = Toast.makeText(this, message, Toast.LENGTH_LONG).show()

@@ -13,13 +13,12 @@ import com.spaetimc.utils.format
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.product_list_entry.view.*
 import javax.inject.Inject
-import kotlin.properties.Delegates
 
 class ProductListAdapter @Inject constructor(
     private val productListListener: ProductListListener
 ) : RecyclerView.Adapter<ProductListAdapter.ViewHolder>() {
 
-    var productList by Delegates.observable(emptyList<AppProduct>()) { _, _, _ -> notifyDataSetChanged() }
+    private var productList = emptyList<AppProduct>()
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val productImage: ImageView = view.productImage
@@ -29,6 +28,11 @@ class ProductListAdapter @Inject constructor(
         val plusButton: ImageButton = view.plusButton
         val minusButton: ImageButton = view.minusButton
         val productCounter: TextView = view.productCounter
+    }
+
+    fun updateList(products: List<AppProduct>) {
+        productList = products
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = LayoutInflater
@@ -51,12 +55,6 @@ class ProductListAdapter @Inject constructor(
             productCounter.text = productList[position].amount.toString()
             plusButton.setOnClickListener { productListListener.onPlusButtonClicked(productList[position]) }
             minusButton.setOnClickListener { productListListener.onMinusButtonClicked(productList[position]) }
-
-            // leave it here for the moment for later use, when there is a product page
-//            with(view) {
-//                tag = productName
-//                setOnClickListener { productListListener.doStuff() }
-//            }
         }
 
     override fun getItemCount() = productList.size

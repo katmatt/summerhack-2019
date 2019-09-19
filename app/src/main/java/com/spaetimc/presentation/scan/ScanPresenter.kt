@@ -37,36 +37,40 @@ class ScanPresenter @Inject constructor(
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                    onSuccess = { product ->
-                        scanView.reStartCamera()
-                        if (productList.any { it.barcodeValue == product.barcodeValue }) onPlusButtonClicked(product)
-                        else productList = productList + product
-                    },
+                    onSuccess = ::handleScannedProduct,
                     onComplete = {
-                        scanView.reStartCamera()
                         scanView.showMessage("Sorry, no product found for this barcode.")
+                        scanView.reStartCamera()
                     },
-                    onError = { scanView.showMessage("Something went wrong, try again.") }
+                    onError = {
+                        scanView.showMessage("Something went wrong, try again.")
+                        scanView.reStartCamera()
+                    }
                 )
                 .addTo(compositeDisposable)
         }
     }
 
-    override fun onPlusButtonClicked(product: AppProduct) {
-        val currentAmount = productList.find { it.barcodeValue == product.barcodeValue }?.amount ?: 1
-        productList = productList
-            .filterNot { it.barcodeValue == product.barcodeValue }
-            .plus(product.copy(amount = currentAmount + 1))
+    private fun handleScannedProduct(product: AppProduct) {
+        productList =
+            if (productList.any { it.barcode == product.barcode }) changeAmountOf(product, withOperation = Int::plus)
+            else productList + product
+        scanView.reStartCamera()
+    }
 
+    private fun changeAmountOf(product: AppProduct, withOperation: Int.(Int) -> Int) =
+        productList
+            .filterNot { it.barcode == product.barcode }
+            .plus(product.copy(amount = product.amount.withOperation(1)))
+
+    override fun onPlusButtonClicked(product: AppProduct) {
+        productList = changeAmountOf(product, withOperation = Int::plus)
     }
 
     override fun onMinusButtonClicked(product: AppProduct) {
-        val currentAmount = productList.find { it.barcodeValue == product.barcodeValue }?.amount ?: 1
         productList =
-            if (currentAmount <= 1) productList - product
-            else productList
-                .filterNot { it.barcodeValue == product.barcodeValue }
-                .plus(product.copy(amount = currentAmount - 1))
+            if (product.amount <= 1) productList - product
+            else changeAmountOf(product, withOperation = Int::minus)
     }
 
     override fun checkout() {
@@ -74,7 +78,10 @@ class ScanPresenter @Inject constructor(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
-                onSuccess = { scanView.showCheckoutScreen(it.orderNumber) },
+                onSuccess = {
+                    scanView.showCheckoutScreen(it.orderNumber)
+                    cancelOrder()
+                },
                 onError = { scanView.showMessage("Something went wrong, try again.") }
             )
             .addTo(compositeDisposable)
