@@ -51,6 +51,11 @@ class ScanActivity : AppCompatActivity(), ScanContract.ScanView, ZXingScannerVie
         scannerView.stopCamera()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        scanPresenter.stop()
+    }
+
     override fun initializeProductList() = with(productList) {
         layoutManager = linearLayoutManager
         adapter = productListAdapter

@@ -15,7 +15,7 @@ import io.reactivex.disposables.CompositeDisposable
 class ScanActivityModule {
 
     @Provides
-    fun providesScanProductUsecase(scanProductUseCaseImpl: ScanProductUseCaseImpl): ScanProductUseCase =
+    fun providesScanProductUseCase(scanProductUseCaseImpl: ScanProductUseCaseImpl): ScanProductUseCase =
         scanProductUseCaseImpl
 
     @Provides
@@ -26,8 +26,7 @@ class ScanActivityModule {
         scanActivity: ScanActivity,
         scanProductUseCase: ScanProductUseCase,
         compositeDisposable: CompositeDisposable
-    ): ScanContract.ScanPresenter =
-        ScanPresenter(scanActivity, scanProductUseCase, compositeDisposable)
+    ): ScanContract.ScanPresenter = ScanPresenter(scanActivity, scanProductUseCase, compositeDisposable)
 
     @Provides
     fun provideScanView(scanActivity: ScanActivity): ScanContract.ScanView = scanActivity

@@ -5,4 +5,5 @@
     <dimen name="product_list_card_margin_bottom">4dp</dimen>
     <dimen name="product_list_card_description_block_padding_start_end">16dp</dimen>
     <dimen name="product_list_card_description_block_padding_start_top">8</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>
