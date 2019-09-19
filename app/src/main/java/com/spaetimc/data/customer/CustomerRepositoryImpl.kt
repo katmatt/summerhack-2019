@@ -12,7 +12,9 @@ class CustomerRepositoryImpl @Inject constructor(
     private val appProject: AppProject
 ) : CustomerRepository {
 
-    override fun createCustomer(): Single<Customer> = CustomerDraftImpl()
+    override fun getMainCustomer(): Single<Customer> = getCustomer().switchIfEmpty(createCustomer())
+
+    private fun createCustomer(): Single<Customer> = CustomerDraftImpl()
         .also { customerDraftImpl ->
             customerDraftImpl.email = "spaetimc@mc.com"
             customerDraftImpl.password = "spaetimc@mc.com"
@@ -30,7 +32,7 @@ class CustomerRepositoryImpl @Inject constructor(
             }
         }
 
-    override fun getCustomer(): Maybe<Customer> = Maybe
+    private fun getCustomer(): Maybe<Customer> = Maybe
         .fromCallable {
             appProject
                 .customers()
@@ -42,9 +44,7 @@ class CustomerRepositoryImpl @Inject constructor(
         }
         .flatMap {
             if (it.isNullOrEmpty()) Maybe.empty()
-            else Maybe.just(it[0])
+            else Maybe.just(it.first())
         }
-
-    override fun getMainCustomer(): Single<Customer> = getCustomer().switchIfEmpty(createCustomer())
 
 }

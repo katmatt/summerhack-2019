@@ -6,10 +6,6 @@ import io.reactivex.Single
 
 interface CustomerRepository {
 
-    fun createCustomer(): Single<Customer>
-
-    fun getCustomer(): Maybe<Customer>
-
     fun getMainCustomer(): Single<Customer>
 
 }
