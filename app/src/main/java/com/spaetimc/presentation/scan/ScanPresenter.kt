@@ -1,6 +1,8 @@
 package com.spaetimc.presentation.scan
 
 import com.spaetimc.domain.ScanProductUseCase
+import com.spaetimc.presentation.scan.model.AppProduct
+import com.spaetimc.presentation.scan.productlist.ProductListListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
@@ -15,7 +17,7 @@ class ScanPresenter @Inject constructor(
     private val compositeDisposable: CompositeDisposable
 ) : ScanContract.ScanPresenter, ProductListListener {
 
-    private var productList by Delegates.observable(emptyList<String>()) { _, _, newProductList ->
+    private var productList by Delegates.observable(emptyList<AppProduct>()) { _, _, newProductList ->
         scanView.updateProductList(newProductList)
     }
 
@@ -36,7 +38,9 @@ class ScanPresenter @Inject constructor(
             .addTo(compositeDisposable)
     }
 
-    override fun doStuff(): Unit = TODO("just to prepare for callbacks from clicks of the product list")
+    override fun onPlusButtonClicked(product: AppProduct) = Unit // TODO("not implemented")
+
+    override fun onMinusButtonClicked(product: AppProduct) = Unit // TODO("not implemented")
 
     override fun stop() = compositeDisposable.dispose()
 
