@@ -17,7 +17,7 @@ class GetCustomerTest {
     }
 
     @Test
-    fun getAllSkus(){
+    fun getAllSkus() {
         println(
             testComponent
                 .getAppProject()
@@ -31,7 +31,7 @@ class GetCustomerTest {
     }
 
     @Test
-    fun searchBySky(){
+    fun searchBySky() {
         println(
             testComponent
                 .getAppProject()
@@ -46,22 +46,24 @@ class GetCustomerTest {
 
 
     @Test
-    fun getNonExistingAppProductByBarcode(){
-        assertTrue(testComponent
-            .getGodRepository()
-            .getAppProduct("")
-            .isEmpty
-            .blockingGet()
+    fun getNonExistingAppProductByBarcode() {
+        assertTrue(
+            testComponent
+                .getGodRepository()
+                .getAppProduct("")
+                .isEmpty
+                .blockingGet()
         )
     }
 
     @Test
-    fun getAppProductByBarcode(){
-        assertFalse(testComponent
-            .getGodRepository()
-            .getAppProduct("4029764001401")
-            .isEmpty
-            .blockingGet()
+    fun getAppProductByBarcode() {
+        assertFalse(
+            testComponent
+                .getGodRepository()
+                .getAppProduct("4029764001401")
+                .isEmpty
+                .blockingGet()
         )
     }
 }

@@ -4,7 +4,6 @@ import com.commercetools.models.cart.Cart
 import com.commercetools.models.customer.Customer
 import com.commercetools.models.customer.CustomerDraftImpl
 import com.commercetools.models.order.Order
-import com.commercetools.models.product.Product
 import com.commercetools.models.product.ProductVariant
 import com.spaetimc.presentation.scan.model.AppProduct
 import com.spaetimc.utils.AppProject
@@ -16,27 +15,26 @@ import javax.inject.Inject
 
 class GodRepositoryImpl @Inject constructor(val appProject: AppProject) : GodRepository {
 
-    override fun createCustomer(): Single<Customer> {
-
-        val customerDraftImpl = CustomerDraftImpl();
-        customerDraftImpl.email = "spaetimc@mc.com"
-        customerDraftImpl.password = "spaetimc@mc.com"
-        customerDraftImpl.firstName = "Mc"
-        customerDraftImpl.firstName = "Greg"
-
-        return Single.fromCallable {
-            appProject
-                .customers()
-                .post(customerDraftImpl)
-                .executeBlocking()
-                .body
-                .customer
+    override fun createCustomer(): Single<Customer> = CustomerDraftImpl()
+        .also { customerDraftImpl ->
+            customerDraftImpl.email = "spaetimc@mc.com"
+            customerDraftImpl.password = "spaetimc@mc.com"
+            customerDraftImpl.firstName = "Mc"
+            customerDraftImpl.firstName = "Greg"
+        }
+        .let { customerDraftImpl ->
+            Single.fromCallable {
+                appProject
+                    .customers()
+                    .post(customerDraftImpl)
+                    .executeBlocking()
+                    .body
+                    .customer
+            }
         }
 
-    }
-
-    override fun getCustomer(): Maybe<Customer> {
-        return Maybe.fromCallable {
+    override fun getCustomer(): Maybe<Customer> = Maybe
+        .fromCallable {
             appProject
                 .customers()
                 .get()
@@ -45,40 +43,26 @@ class GodRepositoryImpl @Inject constructor(val appProject: AppProject) : GodRep
                 .body
                 .results
         }
-            .flatMap {
-                if (it.isNullOrEmpty()) {
-                    Maybe.empty()
-                } else {
-                    Maybe.just(it[0])
-                }
-            }
+        .flatMap {
+            if (it.isNullOrEmpty()) Maybe.empty()
+            else Maybe.just(it[0])
+        }
 
-    }
+    override fun getMainCustomer(): Single<Customer> = getCustomer().switchIfEmpty(createCustomer())
 
-    override fun getMainCustomer(): Single<Customer> = getCustomer()
-        .switchIfEmpty(
-            createCustomer()
-        )
-
-    fun getProduct(): Flowable<ProductVariant> {
-
-        return Flowable.fromCallable {
+    fun getProduct(): Flowable<ProductVariant> = Flowable
+        .fromCallable {
             appProject
                 .productProjections()
                 .get()
                 .executeBlocking()
                 .body
         }
-            .flatMapIterable {
-                it.results
-            }
-            .map { it.masterVariant }
+        .flatMapIterable { it.results }
+        .map { it.masterVariant }
 
-    }
-
-    override fun getAppProduct(barCode: String): Maybe<AppProduct> {
-
-        return Maybe.fromCallable {
+    override fun getAppProduct(barCode: String): Maybe<AppProduct> = Maybe
+        .fromCallable {
             appProject
                 .products()
                 .get()
@@ -87,14 +71,10 @@ class GodRepositoryImpl @Inject constructor(val appProject: AppProject) : GodRep
                 .body
                 .results
         }
-            .flatMap {
-                if (it.isNullOrEmpty()) {
-                    Maybe.empty()
-                } else {
-                    Maybe.just(productToAppProduct(it[0]))
-                }
-            }
-    }
+        .flatMap {
+            if (it.isNullOrEmpty()) Maybe.empty()
+            else Maybe.just(productToAppProduct(it[0]))
+        }
 
     override fun createCart(): Single<Cart> = TODO("not implemented")
 
