@@ -25,14 +25,3 @@ interface TestComponent {
     fun getAppProject(): AppProject
 
 }
-
-
-fun main() {
-    println(
-        DaggerTestComponent
-            .create()
-            .getGodRepository()
-            .getMainCustomer()
-            .blockingGet()
-    )
-}

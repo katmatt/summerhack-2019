@@ -6,7 +6,9 @@ import com.commercetools.models.customer.CustomerDraftImpl
 import com.commercetools.models.order.Order
 import com.commercetools.models.product.Product
 import com.commercetools.models.product.ProductVariant
+import com.spaetimc.presentation.scan.model.AppProduct
 import com.spaetimc.utils.AppProject
+import com.spaetimc.utils.productToAppProduct
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
@@ -74,7 +76,25 @@ class GodRepositoryImpl @Inject constructor(val appProject: AppProject) : GodRep
 
     }
 
-    override fun getProductVariant(barCode: String): Single<ProductVariant> = TODO("not implemented")
+    override fun getAppProduct(barCode: String): Maybe<AppProduct> {
+
+        return Maybe.fromCallable {
+            appProject
+                .products()
+                .get()
+                .addWhere("masterData(current(masterVariant(sku=\"$barCode\")))")
+                .executeBlocking()
+                .body
+                .results
+        }
+            .flatMap {
+                if (it.isNullOrEmpty()) {
+                    Maybe.empty()
+                } else {
+                    Maybe.just(productToAppProduct(it[0]))
+                }
+            }
+    }
 
     override fun createCart(): Single<Cart> = TODO("not implemented")
 
