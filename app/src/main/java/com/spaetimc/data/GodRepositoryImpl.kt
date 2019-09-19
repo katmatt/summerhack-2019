@@ -4,8 +4,10 @@ import com.commercetools.models.cart.Cart
 import com.commercetools.models.customer.Customer
 import com.commercetools.models.customer.CustomerDraftImpl
 import com.commercetools.models.order.Order
+import com.commercetools.models.product.Product
 import com.commercetools.models.product.ProductVariant
 import com.spaetimc.utils.AppProject
+import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
 import javax.inject.Inject
@@ -17,6 +19,8 @@ class GodRepositoryImpl @Inject constructor(val appProject: AppProject) : GodRep
         val customerDraftImpl = CustomerDraftImpl();
         customerDraftImpl.email = "spaetimc@mc.com"
         customerDraftImpl.password = "spaetimc@mc.com"
+        customerDraftImpl.firstName = "Mc"
+        customerDraftImpl.firstName = "Greg"
 
         return Single.fromCallable {
             appProject
@@ -53,6 +57,22 @@ class GodRepositoryImpl @Inject constructor(val appProject: AppProject) : GodRep
         .switchIfEmpty(
             createCustomer()
         )
+
+    fun getProduct(): Flowable<ProductVariant> {
+
+        return Flowable.fromCallable {
+            appProject
+                .productProjections()
+                .get()
+                .executeBlocking()
+                .body
+        }
+            .flatMapIterable {
+                it.results
+            }
+            .map { it.masterVariant }
+
+    }
 
     override fun getProductVariant(barCode: String): Single<ProductVariant> = TODO("not implemented")
 

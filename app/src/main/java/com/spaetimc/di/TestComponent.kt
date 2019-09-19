@@ -4,7 +4,7 @@ import android.app.Application
 import com.commercetools.models.customer.Customer
 import com.spaetimc.MyApplication
 import com.spaetimc.data.GodRepository
-import com.spaetimc.data.GodRepositoryImpl
+import com.spaetimc.utils.AppProject
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
@@ -14,22 +14,25 @@ import javax.inject.Singleton
 @Singleton
 @Component(
     modules = [
-        AndroidInjectionModule::class,
         AppModule::class,
-        AppAbstractModule::class,
-        ActivityModule::class
+        AppAbstractModule::class
     ]
 )
-interface AppComponent {
-    @Component.Builder
-    interface Builder {
+interface TestComponent {
 
-        @BindsInstance
-        fun application(application: Application): Builder
+    fun getGodRepository(): GodRepository
 
-        fun build(): AppComponent
-    }
+    fun getAppProject(): AppProject
 
-    fun inject(myApplication: MyApplication)
+}
 
+
+fun main() {
+    println(
+        DaggerTestComponent
+            .create()
+            .getGodRepository()
+            .getMainCustomer()
+            .blockingGet()
+    )
 }

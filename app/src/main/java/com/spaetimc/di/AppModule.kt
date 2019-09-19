@@ -1,12 +1,16 @@
 package com.spaetimc.di
 
 import com.commercetools.client.ApiRoot
+import com.spaetimc.data.GodRepository
+import com.spaetimc.data.GodRepositoryImpl
 import com.spaetimc.utils.AppProject
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import io.reactivex.disposables.CompositeDisposable
 import io.vrap.rmf.base.client.VrapHttpClient
 import io.vrap.rmf.base.client.middlewares.HttpMiddleware
+import io.vrap.rmf.base.client.middlewares.LoggerMiddleware
 import io.vrap.rmf.base.client.oauth2.ClientCredentialsTokenSupplier
 import io.vrap.rmf.impl.okhttp.VrapOkhttpClient
 import javax.inject.Named
@@ -24,17 +28,17 @@ internal class AppModule {
     @Provides
     @Singleton
     @Named("client_id")
-    fun getClientId(): String = ""
+    fun getClientId(): String = "BrP3ERgWOZAg3FEIJ0iWMxqo"
 
     @Provides
     @Singleton
     @Named("client_secret")
-    fun getClientSecret(): String = ""
+    fun getClientSecret(): String = "4wMNPrF53s07DSfmChNoCh2uuAnoy_0l"
 
     @Provides
     @Singleton
     @Named("project_key")
-    fun getProjectKey(): String = ""
+    fun getProjectKey(): String = "achraf-61"
 
     @Provides
     @Singleton
@@ -65,5 +69,7 @@ internal class AppModule {
         )
         return ApiRoot.fromMiddlewares(httpMiddleware).withProjectKey(project_key)
     }
+
+
 
 }
