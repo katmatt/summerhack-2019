@@ -49,44 +49,37 @@ class ProductRepositoryImpl @Inject constructor(
             else Maybe.just(productToAppProduct(it[0]))
         }
 
-    override fun createCart(appProducts: List<AppProduct>): Single<Cart>{
+    override fun createCart(appProducts: List<AppProduct>): Single<Cart> = customerRepository
+        .getMainCustomer()
+        .map {
+            val cartDraftImpl = CartDraftImpl()
+            cartDraftImpl.currency = "EUR"
+            cartDraftImpl.customerId = it.id
+            cartDraftImpl.lineItems = appProducts.map { it.toLineItemDraft() }
+            cartDraftImpl.taxMode = TaxMode.DISABLED
+            val address = AddressImpl()
+            address.city = "BERLIN"
+            address.country = "DE"
+            cartDraftImpl.shippingAddress = address
+            cartDraftImpl
+        }
+        .map {
+            appProject
+                .carts()
+                .post(it)
+                .executeBlocking()
+                .body
+        }
 
-        return customerRepository
-            .getMainCustomer()
-            .map {
-                val cartDraftImpl = CartDraftImpl()
-                cartDraftImpl.currency = "EUR"
-                cartDraftImpl.customerId =it.id
-                cartDraftImpl.lineItems = appProducts.map { it.toLineItemDraft() }
-                cartDraftImpl.taxMode = TaxMode.DISABLED
-                val address = AddressImpl()
-                address.city = "BERLIN"
-                address.country = "DE"
-                cartDraftImpl.shippingAddress = address
-                cartDraftImpl
-            }
-            .map {
-                appProject
-                    .carts()
-                    .post(it)
-                    .executeBlocking()
-                    .body
-            }
-
-
-    }
-
-    override fun makeOrder(appProducts: List<AppProduct>): Single<Order> {
-        return createCart(appProducts)
-            .map {
-                appProject
-                    .orders()
-                    .post(
-                        it.toOrderDraft()
-                    )
-                    .executeBlocking()
-                    .body
-            }
-    }
+    override fun makeOrder(appProducts: List<AppProduct>): Single<Order> = createCart(appProducts)
+        .map {
+            appProject
+                .orders()
+                .post(
+                    it.toOrderDraft()
+                )
+                .executeBlocking()
+                .body
+        }
 
 }

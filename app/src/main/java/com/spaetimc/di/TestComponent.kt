@@ -6,7 +6,6 @@ import com.spaetimc.utils.AppProject
 import dagger.Component
 import javax.inject.Singleton
 
-
 @Singleton
 @Component(
     modules = [
