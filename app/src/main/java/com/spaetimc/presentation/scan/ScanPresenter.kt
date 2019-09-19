@@ -18,7 +18,7 @@ class ScanPresenter @Inject constructor(
     private val compositeDisposable: CompositeDisposable
 ) : ScanContract.ScanPresenter, ProductListListener {
 
-    private var productList by Delegates.observable(emptyList<AppProduct>()) { _, _, newProductList ->
+    private var productList by Delegates.observable(emptyList<AppProduct>()) { property, _, newProductList ->
         scanView.updateProductList(newProductList)
     }
 
@@ -48,8 +48,15 @@ class ScanPresenter @Inject constructor(
         }
     }
 
+    override fun onPlusButtonClicked(product: AppProduct) {
+        val produit = productList
+            .find { it.barcodeValue == product.barcodeValue }
+            ?.copy(amount = product.amount + 1)
+            ?.also { updatedProduct ->
+                productList = productList - product + updatedProduct
+            }
+    }
 
-    override fun onPlusButtonClicked(product: AppProduct) = Unit // TODO("not implemented")
 
     override fun onMinusButtonClicked(product: AppProduct) = Unit // TODO("not implemented")
 
