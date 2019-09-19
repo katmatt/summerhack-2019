@@ -1,6 +1,7 @@
 package com.spaetimc.presentation.scan.model
 
 data class AppProduct(
+    val createdAt: Long,
     val name: String,
     val description: String,
     val price: String,

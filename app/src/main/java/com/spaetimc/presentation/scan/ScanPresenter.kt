@@ -24,7 +24,7 @@ class ScanPresenter @Inject constructor(
 ) : ScanContract.ScanPresenter, ProductListListener {
 
     private var productList by Delegates.observable(emptyList<AppProduct>()) { _, _, newProductList ->
-        scanView.updateProductList(newProductList)
+        scanView.updateProductList(newProductList.sortedByDescending { it.createdAt })
     }
 
     override fun start() = with(scanView) {

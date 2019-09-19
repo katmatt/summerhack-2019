@@ -18,7 +18,8 @@ fun productToAppProduct(product: Product): AppProduct {
         description = product.masterData.current.description.values()["de-DE"] ?: "NO description found",
         pictureUrl = product.masterData.current.masterVariant.images[0]?.url ?: "default_url",
         price = product.priceAsString(),
-        barcodeValue = product.masterData.current.masterVariant.sku
+        barcodeValue = product.masterData.current.masterVariant.sku,
+        createdAt = System.currentTimeMillis()
     )
 }
 
