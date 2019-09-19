@@ -52,7 +52,7 @@ class ScanPresenter @Inject constructor(
 
     override fun onPlusButtonClicked(product: AppProduct) {
 
-        val currentAmmount = productList.find { it.barcodeValue == product.barcodeValue }?.amount?:1
+        val currentAmmount = productList.find { it.barcodeValue == product.barcodeValue }?.amount ?: 1
         productList = productList
             .filterNot { it.barcodeValue == product.barcodeValue }
             .plus(product.copy(amount = currentAmmount + 1))
@@ -60,7 +60,7 @@ class ScanPresenter @Inject constructor(
     }
 
     override fun onMinusButtonClicked(product: AppProduct) {
-        val currentAmmount = productList.find { it.barcodeValue == product.barcodeValue }?.amount?:1
+        val currentAmmount = productList.find { it.barcodeValue == product.barcodeValue }?.amount ?: 1
         productList =
             if (currentAmmount <= 1) productList - product
             else productList
@@ -73,10 +73,7 @@ class ScanPresenter @Inject constructor(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
-                onSuccess = { order ->
-                    scanView.showCheckoutScreen(order.orderNumber)
-                    scanView.showMessage("order succeeded with orderNumber=\"${order.orderNumber}\"")
-                },
+                onSuccess = { scanView.showCheckoutScreen(it.orderNumber) },
                 onError = { scanView.showMessage("Something went wrong, try again.") }
             )
             .addTo(compositeDisposable)
