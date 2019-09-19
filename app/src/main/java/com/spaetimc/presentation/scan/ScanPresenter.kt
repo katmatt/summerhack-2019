@@ -54,17 +54,21 @@ class ScanPresenter @Inject constructor(
     }
 
     override fun onPlusButtonClicked(product: AppProduct) {
+
+        val currentAmmount = productList.find { it.barcodeValue == product.barcodeValue }?.amount?:1
         productList = productList
             .filterNot { it.barcodeValue == product.barcodeValue }
-            .plus(product.copy(amount = product.amount + 1))
+            .plus(product.copy(amount = currentAmmount + 1))
+
     }
 
     override fun onMinusButtonClicked(product: AppProduct) {
+        val currentAmmount = productList.find { it.barcodeValue == product.barcodeValue }?.amount?:1
         productList =
-            if (product.amount <= 1) productList - product
+            if (currentAmmount <= 1) productList - product
             else productList
                 .filterNot { it.barcodeValue == product.barcodeValue }
-                .plus(product.copy(amount = product.amount - 1))
+                .plus(product.copy(amount = currentAmmount - 1))
     }
 
     override fun checkout() {
