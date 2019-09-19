@@ -5,5 +5,6 @@ data class AppProduct(
     val description: String,
     val price: String,
     val pictureUrl: String,
+    val barcodeValue: String,
     val amount: Int = 1
 )

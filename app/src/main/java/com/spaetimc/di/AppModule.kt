@@ -25,17 +25,17 @@ internal class AppModule {
     @Provides
     @Singleton
     @Named("client_id")
-    fun getClientId(): String = "BrP3ERgWOZAg3FEIJ0iWMxqo"
+    fun getClientId(): String = "vlpXbEFrcRN25J_yxKE0n9M6"
 
     @Provides
     @Singleton
     @Named("client_secret")
-    fun getClientSecret(): String = "4wMNPrF53s07DSfmChNoCh2uuAnoy_0l"
+    fun getClientSecret(): String = "Z_3BH5aqyAS-LcSKlKcRzXNoSyXkRsv3"
 
     @Provides
     @Singleton
     @Named("project_key")
-    fun getProjectKey(): String = "achraf-61"
+    fun getProjectKey(): String = "spati-mc"
 
     @Provides
     @Singleton
