@@ -1,4 +1,4 @@
-package com.spaetimc.scan
+package com.spaetimc.presentation.scan
 
 import android.view.LayoutInflater
 import android.view.View
@@ -11,17 +11,13 @@ import javax.inject.Inject
 import kotlin.properties.Delegates
 
 class ProductListAdapter @Inject constructor(
-    private val callback: ProductListCallback
+    private val productListListener: ProductListListener
 ) : RecyclerView.Adapter<ProductListAdapter.ViewHolder>() {
-
-    interface ProductListCallback {
-        fun doStuff()
-    }
 
     var productList by Delegates.observable(emptyList<String>()) { _, _, _ -> notifyDataSetChanged() }
 
     private val onClickListener: View.OnClickListener by lazy {
-        View.OnClickListener { callback.doStuff() }
+        View.OnClickListener { productListListener.doStuff() }
     }
 
     inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {

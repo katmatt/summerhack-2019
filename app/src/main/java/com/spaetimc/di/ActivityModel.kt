@@ -1,7 +1,7 @@
 package com.spaetimc.di
 
-import com.spaetimc.scan.MainActivity
-import com.spaetimc.scan.MainActivityModule
+import com.spaetimc.presentation.scan.ScanActivity
+import com.spaetimc.presentation.scan.ScanActivityModule
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import javax.inject.Scope
@@ -14,8 +14,8 @@ annotation class ActivityScope
 internal abstract class ActivityModule {
 
     @ActivityScope
-    @ContributesAndroidInjector(modules = [MainActivityModule::class])
-    abstract fun contributeSearchActivity(): MainActivity
+    @ContributesAndroidInjector(modules = [ScanActivityModule::class])
+    abstract fun contributeScanActivity(): ScanActivity
 
 
 }

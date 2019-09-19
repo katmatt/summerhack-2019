@@ -1,6 +1,7 @@
-package com.spaetimc.scan
+package com.spaetimc.presentation.scan
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.spaetimc.R
@@ -9,7 +10,10 @@ import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), ProductListAdapter.ProductListCallback {
+class ScanActivity : AppCompatActivity(), ScanContract.ScanView {
+
+    @Inject
+    lateinit var scanPresenter: ScanContract.ScanPresenter
 
     @Inject
     lateinit var productListAdapter: ProductListAdapter
@@ -25,15 +29,26 @@ class MainActivity : AppCompatActivity(), ProductListAdapter.ProductListCallback
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        scanPresenter.start()
+    }
+
+    override fun initializeProductlist() {
         with(productList) {
             layoutManager = linearLayoutManager
             adapter = productListAdapter
         }
-
-        productListAdapter.productList = listOf("Product 1", "Product 2")
     }
 
-    override fun doStuff(): Unit =
-        TODO("just to prepare for callbacks from clicks of the product list")
+    override fun initScanner(): Unit = Unit // TODO
+
+    override fun updateProductList(productList: List<String>) {
+        productListAdapter.productList = productList
+    }
+
+    override fun showProgress(): Unit = Unit // TODO
+
+    override fun hideProgress(): Unit = Unit // TODO
+
+    override fun showMessage(message: String?): Unit = Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 
 }

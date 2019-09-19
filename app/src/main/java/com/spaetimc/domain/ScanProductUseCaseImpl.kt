@@ -5,6 +5,6 @@ import javax.inject.Inject
 
 class ScanProductUseCaseImpl @Inject constructor() : ScanProductUseCase {
 
-    override fun scanProduct(): Flowable<String> = TODO(reason = "not implemented")
+    override fun scanProduct(): Flowable<String> = Flowable.just("Product 1", "Product 2")
 
 }
