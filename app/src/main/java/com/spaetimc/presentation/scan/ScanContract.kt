@@ -13,7 +13,9 @@ interface ScanContract {
 
         fun updateProductList(productList: List<AppProduct>)
 
-        fun initOnClickListners()
+        fun updateTotalPrice(centAmount: Int)
+
+        fun initOnClickListeners()
 
         fun reStartCamera()
 

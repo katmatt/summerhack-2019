@@ -20,13 +20,15 @@ class ScanPresenter @Inject constructor(
     private val compositeDisposable: CompositeDisposable
 ) : ScanContract.ScanPresenter, ProductListListener {
 
-    private var productList by Delegates.observable(emptyList<AppProduct>()) { _, _, newProductList ->
+    private var productList by Delegates.observable(emptyList<AppProduct>()) { _, oldValue, newProductList ->
         scanView.updateProductList(newProductList.sortedByDescending { it.createdAt })
+        val totalPriceInCent: Int = newProductList.sumBy { it.priceInCent * it.amount }
+        scanView.updateTotalPrice(totalPriceInCent)
     }
 
     override fun start() = with(scanView) {
         initializeProductList()
-        initOnClickListners()
+        initOnClickListeners()
     }
 
     override fun handleNewBarcode(barcode: Result?) {

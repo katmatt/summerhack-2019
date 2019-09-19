@@ -11,6 +11,7 @@ import com.spaetimc.domain.ScanProductUseCase
 import com.spaetimc.presentation.checkout.CheckoutActivity
 import com.spaetimc.presentation.scan.model.AppProduct
 import com.spaetimc.presentation.scan.productlist.ProductListAdapter
+import com.spaetimc.utils.format
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_scan.*
 import me.dm7.barcodescanner.zxing.ZXingScannerView
@@ -63,7 +64,11 @@ class ScanActivity : AppCompatActivity(), ScanContract.ScanView, ZXingScannerVie
         adapter = productListAdapter
     }
 
-    override fun initOnClickListners() {
+    override fun updateTotalPrice(centAmount: Int) {
+        totalView.text = "Total ${centAmount.format()}€"
+    }
+
+    override fun initOnClickListeners() {
         checkoutButton.setOnClickListener { scanPresenter.checkout() }
         cancelButton.setOnClickListener { scanPresenter.cancelOrder() }
     }
@@ -82,6 +87,7 @@ class ScanActivity : AppCompatActivity(), ScanContract.ScanView, ZXingScannerVie
 
     override fun updateProductList(productList: List<AppProduct>) {
         productListAdapter.productList = productList
+
     }
 
     override fun showMessage(message: String?): Unit = Toast.makeText(this, message, Toast.LENGTH_LONG).show()

@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.spaetimc.R
 import com.spaetimc.presentation.scan.model.AppProduct
+import com.spaetimc.utils.format
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.product_list_entry.view.*
 import javax.inject.Inject
@@ -46,7 +47,7 @@ class ProductListAdapter @Inject constructor(
 
             productName.text = productList[position].name
             productDescription.text = productList[position].description
-            productPrice.text = productList[position].price
+            productPrice.text = productList[position].priceInCent.format()
             productCounter.text = productList[position].amount.toString()
             plusButton.setOnClickListener { productListListener.onPlusButtonClicked(productList[position]) }
             minusButton.setOnClickListener { productListListener.onMinusButtonClicked(productList[position]) }

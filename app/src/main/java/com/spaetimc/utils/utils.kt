@@ -17,10 +17,16 @@ fun productToAppProduct(product: Product): AppProduct {
         name = product.masterData.current.name.values()["de-DE"] ?: "NO name found",
         description = product.masterData.current.description.values()["de-DE"] ?: "NO description found",
         pictureUrl = product.masterData.current.masterVariant.images[0]?.url ?: "default_url",
-        price = product.priceAsString(),
+        priceInCent = product.masterData.current.masterVariant.price.value.centAmount.toInt(),
         barcodeValue = product.masterData.current.masterVariant.sku,
         createdAt = System.currentTimeMillis()
     )
+}
+
+fun Int.format(): String {
+    val eur: Int = this / 100
+    val cent: Int = this % 100
+    return String.format("%d,%02d", eur, cent)
 }
 
 fun Product.priceAsString(): String {
