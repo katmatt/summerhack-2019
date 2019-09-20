@@ -79,6 +79,10 @@ class ScanPresenter
     }
 
     override fun checkout() {
+        if(productList.isEmpty()){
+            scanView.showMessage("Can't checkout an empty cart")
+            return
+        }
         checkoutUseCase.checkout(productList)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
