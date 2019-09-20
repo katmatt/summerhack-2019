@@ -1,9 +1,15 @@
 package com.spaetimc.presentation.scan
 
+import android.Manifest.permission.CAMERA
+import android.Manifest.permission.READ_CONTACTS
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.zxing.Result
 import com.spaetimc.R
@@ -80,12 +86,24 @@ class ScanActivity : AppCompatActivity(), ScanContract.ScanView, ZXingScannerVie
             .also { it.putExtra("orderNumber", orderNumber) }
             .let { intent -> startActivity(intent) }
 
-    override fun updateProductList(productList: List<AppProduct>) = productListAdapter.updateList(productList)
+    override fun updateProductList(productList: List<AppProduct>) {
+        productListAdapter.productList = productList
+    }
 
     override fun showMessage(message: String?): Unit = Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 
     override fun showProgress(): Unit = indeterminateBar.show()
 
     override fun hideProgress(): Unit = indeterminateBar.hide()
+
+    override fun requestPermissions() {
+        val isPermissionGranted = ContextCompat.checkSelfPermission(this, CAMERA) != PERMISSION_GRANTED
+        val shouldNotShowRequestPermissionRationale by lazy {
+            !ActivityCompat.shouldShowRequestPermissionRationale(this, READ_CONTACTS)
+        }
+
+        if (isPermissionGranted && shouldNotShowRequestPermissionRationale)
+            ActivityCompat.requestPermissions(this, arrayOf(CAMERA), 0)
+    }
 
 }

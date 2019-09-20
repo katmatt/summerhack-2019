@@ -21,6 +21,7 @@ interface ScanContract {
 
         fun showCheckoutScreen(orderNumber: String)
 
+        fun requestPermissions()
     }
 
     interface ScanPresenter : BasePresenter {

@@ -1,5 +1,7 @@
 package com.spaetimc.presentation.scan
 
+import android.util.Log
+import com.commercetools.models.order.Order
 import com.google.zxing.Result
 import com.spaetimc.domain.CheckoutUseCase
 import com.spaetimc.domain.ScanProductUseCase
@@ -28,6 +30,7 @@ class ScanPresenter
     }
 
     override fun start() = with(scanView) {
+        requestPermissions()
         initializeProductList()
         initOnClickListeners()
     }
@@ -40,20 +43,8 @@ class ScanPresenter
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                     onSuccess = ::handleScannedProduct,
-                    onComplete = {
-                        with(scanView) {
-                            hideProgress()
-                            showMessage("Sorry, no product found for this barcode.")
-                            reStartCamera()
-                        }
-                    },
-                    onError = {
-                        with(scanView) {
-                            hideProgress()
-                            showMessage("Something went wrong, try again.")
-                            reStartCamera()
-                        }
-                    }
+                    onComplete = ::handleNoProductFound,
+                    onError = ::handleScanError
                 )
                 .addTo(compositeDisposable)
         }
@@ -66,6 +57,19 @@ class ScanPresenter
         }
         scanView.hideProgress()
         scanView.reStartCamera()
+    }
+
+    private fun handleNoProductFound() = with(scanView) {
+        hideProgress()
+        showMessage("Sorry, no product found for this barcode.")
+        reStartCamera()
+    }
+
+    private fun handleScanError(throwable: Throwable) = with(scanView) {
+        Log.d(TAG, throwable.message ?: "Message missing")
+        hideProgress()
+        showMessage("Something went wrong, try again.")
+        reStartCamera()
     }
 
     private fun changeAmountOf(product: AppProduct, withOperation: Int.(Int) -> Int) =
@@ -83,30 +87,25 @@ class ScanPresenter
             else changeAmountOf(product, withOperation = Int::minus)
     }
 
-    override fun checkout() {
+    override fun checkout() =
         if (productList.isEmpty()) scanView.showMessage("Can't checkout an empty cart")
-        else {
-            scanView.showProgress()
+        else scanView.showProgress().also {
             checkoutUseCase.checkout(productList)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onSuccess = {
-                        with(scanView) {
-                            hideProgress()
-                            showCheckoutScreen(it.orderNumber)
-                        }
-                        cancelOrder()
-                    },
-                    onError = {
-                        with(scanView) {
-                            hideProgress()
-                            showMessage("Something went wrong, try again.")
-                        }
-                    }
-                )
+                .subscribeBy(onSuccess = ::handleSuccessfulOrder, onError = ::handleCheckoutError)
                 .addTo(compositeDisposable)
         }
+
+    private fun handleSuccessfulOrder(order: Order) = with(scanView) {
+        hideProgress()
+        showCheckoutScreen(order.orderNumber)
+    }.also { cancelOrder() }
+
+    private fun handleCheckoutError(throwable: Throwable) = with(scanView) {
+        Log.d(TAG, throwable.message ?: "Message missing")
+        hideProgress()
+        showMessage("Something went wrong, try again.")
     }
 
     override fun cancelOrder() {
@@ -114,5 +113,9 @@ class ScanPresenter
     }
 
     override fun stop() = compositeDisposable.dispose()
+
+    companion object {
+        private const val TAG = "ScanPresenter"
+    }
 
 }
