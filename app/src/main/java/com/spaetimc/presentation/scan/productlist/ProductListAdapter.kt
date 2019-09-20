@@ -13,12 +13,13 @@ import com.spaetimc.utils.format
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.product_list_entry.view.*
 import javax.inject.Inject
+import kotlin.properties.Delegates
 
 class ProductListAdapter @Inject constructor(
     private val productListListener: ProductListListener
 ) : RecyclerView.Adapter<ProductListAdapter.ViewHolder>() {
 
-    private var productList = emptyList<AppProduct>()
+    var productList by Delegates.observable(emptyList<AppProduct>()) { _, _, _ -> notifyDataSetChanged() }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val productImage: ImageView = view.productImage
@@ -30,32 +31,26 @@ class ProductListAdapter @Inject constructor(
         val productCounter: TextView = view.productCounter
     }
 
-    fun updateList(products: List<AppProduct>) {
-        productList = products
-        notifyDataSetChanged()
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = LayoutInflater
         .from(parent.context)
         .inflate(R.layout.product_list_entry, parent, false)
         .let { ViewHolder(it) }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) =
-        with(holder) {
-            Picasso.get()
-                .load(productList[position].pictureUrl)
-                .resize(112, 112)
-                .centerCrop()
-                .placeholder(R.drawable.ic_placeholder_pic2)
-                .into(productImage)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) = with(holder) {
+        Picasso.get()
+            .load(productList[position].pictureUrl)
+            .resize(112, 112)
+            .centerCrop()
+            .placeholder(R.drawable.ic_placeholder_pic2)
+            .into(productImage)
 
-            productName.text = productList[position].name
-            productDescription.text = productList[position].description
-            productPrice.text = productList[position].priceInCent.format()
-            productCounter.text = productList[position].amount.toString()
-            plusButton.setOnClickListener { productListListener.onPlusButtonClicked(productList[position]) }
-            minusButton.setOnClickListener { productListListener.onMinusButtonClicked(productList[position]) }
-        }
+        productName.text = productList[position].name
+        productDescription.text = productList[position].description
+        productPrice.text = productList[position].priceInCent.format()
+        plusButton.setOnClickListener { productListListener.onPlusButtonClicked(productList[position]) }
+        minusButton.setOnClickListener { productListListener.onMinusButtonClicked(productList[position]) }
+        productCounter.text = productList[position].amount.toString()
+    }
 
     override fun getItemCount() = productList.size
 
