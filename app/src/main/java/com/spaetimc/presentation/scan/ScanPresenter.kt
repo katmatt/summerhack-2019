@@ -9,9 +9,11 @@ import com.spaetimc.presentation.scan.model.AppProduct
 import com.spaetimc.presentation.scan.productlist.ProductListListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.processors.PublishProcessor
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
@@ -29,24 +31,45 @@ class ScanPresenter
         scanView.updateTotalPrice(totalPriceInCent)
     }
 
+    private lateinit var barcodeStream: PublishProcessor<String>
+    private val EMPTY_PRODUCT = AppProduct(name = "EMPTY_PRODUCT",createdAt = 0,pictureUrl = "",description = "empty_product",amount = 0,barcode = "",priceInCent = 0)
+
     override fun start() = with(scanView) {
         requestPermissions()
         initializeProductList()
         initOnClickListeners()
+        initialiseCodeBarStream()
+    }
+
+    private fun initialiseCodeBarStream() {
+        barcodeStream = PublishProcessor.create()
+        barcodeStream
+            .debounce(1, TimeUnit.SECONDS)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .flatMapMaybe { scanProductUseCase.getProduct(it).defaultIfEmpty(EMPTY_PRODUCT) }
+            .subscribeBy(
+                onNext = {
+                    println(it)
+                    scanView.showProgress()
+                    if (it === EMPTY_PRODUCT) {
+                        handleNoProductFound()
+                    } else {
+                        handleScannedProduct(it)
+                    }
+                    scanView.hideProgress()
+                    scanView.reStartCamera()
+                },
+                onError = {
+                    handleScanError(it)
+                }
+            )
+            .addTo(compositeDisposable)
     }
 
     override fun handleNewBarcode(barcode: Result?) {
-        barcode?.text?.let { code ->
-            scanView.showProgress()
-            scanProductUseCase.getProduct(code)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onSuccess = ::handleScannedProduct,
-                    onComplete = ::handleNoProductFound,
-                    onError = ::handleScanError
-                )
-                .addTo(compositeDisposable)
+        barcode?.text?.let {
+            barcodeStream.onNext(it)
         }
     }
 
@@ -55,21 +78,15 @@ class ScanPresenter
             null -> productList + product
             else -> changeAmountOf(productInList, withOperation = Int::plus)
         }
-        scanView.hideProgress()
-        scanView.reStartCamera()
     }
 
     private fun handleNoProductFound() = with(scanView) {
-        hideProgress()
         showMessage("Sorry, no product found for this barcode.")
-        reStartCamera()
     }
 
     private fun handleScanError(throwable: Throwable) = with(scanView) {
         Log.d(TAG, throwable.message ?: "Message missing")
-        hideProgress()
         showMessage("Something went wrong, try again.")
-        reStartCamera()
     }
 
     private fun changeAmountOf(product: AppProduct, withOperation: Int.(Int) -> Int) =
