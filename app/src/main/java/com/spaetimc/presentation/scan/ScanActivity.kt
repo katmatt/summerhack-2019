@@ -3,11 +3,11 @@ package com.spaetimc.presentation.scan
 import android.Manifest.permission.CAMERA
 import android.Manifest.permission.READ_CONTACTS
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -43,6 +43,9 @@ class ScanActivity : AppCompatActivity(), ScanContract.ScanView, ZXingScannerVie
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scan)
+
+        setSupportActionBar(toolbar as Toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
 
         scanPresenter.start()
     }
