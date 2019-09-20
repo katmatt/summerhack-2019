@@ -1,6 +1,7 @@
 package com.spaetimc.di
 
 import com.spaetimc.data.CustomerRepository
+import com.spaetimc.data.OrderRepository
 import com.spaetimc.data.ProductRepository
 import com.spaetimc.utils.AppProject
 import dagger.Component
@@ -21,5 +22,7 @@ interface TestComponent {
     fun getCustomerRepository(): CustomerRepository
 
     fun getAppProject(): AppProject
+
+    fun getOrderRepository(): OrderRepository
 
 }

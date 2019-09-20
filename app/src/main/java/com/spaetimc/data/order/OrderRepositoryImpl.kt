@@ -28,7 +28,7 @@ class OrderRepositoryImpl @Inject constructor(
                     .body
             }
 
-    private fun createCart(customer: Customer, appProducts: List<AppProduct>): Single<Cart> = Single
+    override fun createCart(customer: Customer, appProducts: List<AppProduct>): Single<Cart> = Single
         .just(
             AddressImpl().also { address ->
                 address.city = "BERLIN"

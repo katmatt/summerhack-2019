@@ -13,7 +13,8 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
-class ScanPresenter @Inject constructor(
+class ScanPresenter
+@Inject constructor(
     private val scanView: ScanContract.ScanView,
     private val scanProductUseCase: ScanProductUseCase,
     private val checkoutUseCase: CheckoutUseCase,
@@ -52,9 +53,13 @@ class ScanPresenter @Inject constructor(
     }
 
     private fun handleScannedProduct(product: AppProduct) {
+        val productInList = productList.find { it.barcode == product.barcode }
         productList =
-            if (productList.any { it.barcode == product.barcode }) changeAmountOf(product, withOperation = Int::plus)
-            else productList + product
+            if (productInList != null) {
+                changeAmountOf(productInList, withOperation = Int::plus)
+            } else {
+                productList + product
+            }
         scanView.reStartCamera()
     }
 
