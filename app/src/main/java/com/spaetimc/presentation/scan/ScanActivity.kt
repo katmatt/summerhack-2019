@@ -1,9 +1,13 @@
 package com.spaetimc.presentation.scan
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.zxing.Result
 import com.spaetimc.R
@@ -37,6 +41,7 @@ class ScanActivity : AppCompatActivity(), ScanContract.ScanView, ZXingScannerVie
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scan)
+        requestPermissions()
 
         scanPresenter.start()
     }
@@ -87,5 +92,34 @@ class ScanActivity : AppCompatActivity(), ScanContract.ScanView, ZXingScannerVie
     override fun showProgress(): Unit = indeterminateBar.show()
 
     override fun hideProgress(): Unit = indeterminateBar.hide()
+
+
+    fun requestPermissions(){
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_CONTACTS)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.CAMERA),
+                    0)
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        } else {
+            // Permission has already been granted
+        }
+
+    }
 
 }
