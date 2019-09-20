@@ -1,5 +1,6 @@
 package com.spaetimc.presentation.scan
 
+import android.util.Log
 import com.commercetools.models.order.Order
 import com.google.zxing.Result
 import com.spaetimc.domain.CheckoutUseCase
@@ -41,20 +42,8 @@ class ScanPresenter
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                     onSuccess = ::handleScannedProduct,
-                    onComplete = {
-                        with(scanView) {
-                            hideProgress()
-                            showMessage("Sorry, no product found for this barcode.")
-                            reStartCamera()
-                        }
-                    },
-                    onError = {
-                        with(scanView) {
-                            hideProgress()
-                            showMessage("Something went wrong, try again.")
-                            reStartCamera()
-                        }
-                    }
+                    onComplete = ::handleNoProductFound,
+                    onError = ::handleScanError
                 )
                 .addTo(compositeDisposable)
         }
@@ -67,6 +56,19 @@ class ScanPresenter
         }
         scanView.hideProgress()
         scanView.reStartCamera()
+    }
+
+    private fun handleNoProductFound() = with(scanView) {
+        hideProgress()
+        showMessage("Sorry, no product found for this barcode.")
+        reStartCamera()
+    }
+
+    private fun handleScanError(throwable: Throwable) = with(scanView) {
+        Log.d(TAG, throwable.message ?: "Message missing")
+        hideProgress()
+        showMessage("Something went wrong, try again.")
+        reStartCamera()
     }
 
     private fun changeAmountOf(product: AppProduct, withOperation: Int.(Int) -> Int) =
@@ -84,35 +86,35 @@ class ScanPresenter
             else changeAmountOf(product, withOperation = Int::minus)
     }
 
-    override fun checkout() {
+    override fun checkout() =
         if (productList.isEmpty()) scanView.showMessage("Can't checkout an empty cart")
-        else {
-            scanView.showProgress()
+        else scanView.showProgress().also {
             checkoutUseCase.checkout(productList)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onSuccess = this::handleSuccessfulOrder,
-                    onError = this::handleCheckoutError
-                )
+                .subscribeBy(onSuccess = ::handleSuccessfulOrder, onError = ::handleCheckoutError)
                 .addTo(compositeDisposable)
         }
-    }
-
-    private fun handleCheckoutError(it: Throwable) = with(scanView) {
-        hideProgress()
-        showMessage("Something went wrong, try again.")
-    }
 
     private fun handleSuccessfulOrder(order: Order) = with(scanView) {
         hideProgress()
         showCheckoutScreen(order.orderNumber)
     }.also { cancelOrder() }
 
+    private fun handleCheckoutError(throwable: Throwable) = with(scanView) {
+        Log.d(TAG, throwable.message ?: "Message missing")
+        hideProgress()
+        showMessage("Something went wrong, try again.")
+    }
+
     override fun cancelOrder() {
         productList = emptyList()
     }
 
     override fun stop() = compositeDisposable.dispose()
+
+    companion object {
+        private const val TAG = "ScanPresenter"
+    }
 
 }
