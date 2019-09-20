@@ -31,14 +31,10 @@ class ScanActivity : AppCompatActivity(), ScanContract.ScanView, ZXingScannerVie
     @Inject
     lateinit var scanProductUseCase: ScanProductUseCase
 
-    private var cameraId: Int = -1
-
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scan)
-
-        cameraId = savedInstanceState?.getInt("CAMERA_ID", -1) ?: cameraId
 
         scanPresenter.start()
     }
@@ -46,7 +42,7 @@ class ScanActivity : AppCompatActivity(), ScanContract.ScanView, ZXingScannerVie
     override fun onResume() {
         super.onResume()
         scannerView.setResultHandler(this)
-        scannerView.startCamera(cameraId)
+        scannerView.startCamera()
     }
 
     override fun onPause() {
