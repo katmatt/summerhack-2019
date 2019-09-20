@@ -12,6 +12,8 @@ import com.spaetimc.presentation.checkout.CheckoutActivity
 import com.spaetimc.presentation.scan.model.AppProduct
 import com.spaetimc.presentation.scan.productlist.ProductListAdapter
 import com.spaetimc.utils.format
+import com.spaetimc.utils.hide
+import com.spaetimc.utils.show
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_scan.*
 import me.dm7.barcodescanner.zxing.ZXingScannerView
@@ -82,8 +84,8 @@ class ScanActivity : AppCompatActivity(), ScanContract.ScanView, ZXingScannerVie
 
     override fun showMessage(message: String?): Unit = Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 
-    override fun showProgress(): Unit = Unit // TODO
+    override fun showProgress(): Unit = indeterminateBar.show()
 
-    override fun hideProgress(): Unit = Unit // TODO
+    override fun hideProgress(): Unit = indeterminateBar.hide()
 
 }

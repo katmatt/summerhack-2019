@@ -34,18 +34,25 @@ class ScanPresenter
 
     override fun handleNewBarcode(barcode: Result?) {
         barcode?.text?.let { code ->
+            scanView.showProgress()
             scanProductUseCase.getProduct(code)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                     onSuccess = ::handleScannedProduct,
                     onComplete = {
-                        scanView.showMessage("Sorry, no product found for this barcode.")
-                        scanView.reStartCamera()
+                        with(scanView) {
+                            hideProgress()
+                            showMessage("Sorry, no product found for this barcode.")
+                            reStartCamera()
+                        }
                     },
                     onError = {
-                        scanView.showMessage("Something went wrong, try again.")
-                        scanView.reStartCamera()
+                        with(scanView) {
+                            hideProgress()
+                            showMessage("Something went wrong, try again.")
+                            reStartCamera()
+                        }
                     }
                 )
                 .addTo(compositeDisposable)
@@ -53,13 +60,11 @@ class ScanPresenter
     }
 
     private fun handleScannedProduct(product: AppProduct) {
-        val productInList = productList.find { it.barcode == product.barcode }
-        productList =
-            if (productInList != null) {
-                changeAmountOf(productInList, withOperation = Int::plus)
-            } else {
-                productList + product
-            }
+        productList = when (val productInList = productList.find { it.barcode == product.barcode }) {
+            null -> productList + product
+            else -> changeAmountOf(productInList, withOperation = Int::plus)
+        }
+        scanView.hideProgress()
         scanView.reStartCamera()
     }
 
@@ -79,21 +84,29 @@ class ScanPresenter
     }
 
     override fun checkout() {
-        if(productList.isEmpty()){
-            scanView.showMessage("Can't checkout an empty cart")
-            return
+        if (productList.isEmpty()) scanView.showMessage("Can't checkout an empty cart")
+        else {
+            scanView.showProgress()
+            checkoutUseCase.checkout(productList)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onSuccess = {
+                        with(scanView) {
+                            hideProgress()
+                            showCheckoutScreen(it.orderNumber)
+                        }
+                        cancelOrder()
+                    },
+                    onError = {
+                        with(scanView) {
+                            hideProgress()
+                            showMessage("Something went wrong, try again.")
+                        }
+                    }
+                )
+                .addTo(compositeDisposable)
         }
-        checkoutUseCase.checkout(productList)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onSuccess = {
-                    scanView.showCheckoutScreen(it.orderNumber)
-                    cancelOrder()
-                },
-                onError = { scanView.showMessage("Something went wrong, try again.") }
-            )
-            .addTo(compositeDisposable)
     }
 
     override fun cancelOrder() {

@@ -7,6 +7,18 @@
     android:background="#2A2B40"
     tools:context=".presentation.scan.ScanActivity">
 
+    <ProgressBar
+        android:id="@+id/indeterminateBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/colorAccent"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <me.dm7.barcodescanner.zxing.ZXingScannerView
         android:id="@+id/scannerView"
         android:layout_width="match_parent"

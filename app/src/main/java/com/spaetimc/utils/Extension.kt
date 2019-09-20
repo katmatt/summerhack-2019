@@ -1,5 +1,6 @@
 package com.spaetimc.utils
 
+import android.view.View
 import com.commercetools.client.ByProjectKeyRequestBuilder
 import com.commercetools.models.cart.Cart
 import com.commercetools.models.cart.LineItemDraft
@@ -42,3 +43,11 @@ fun Cart.toOrderDraft(): OrderFromCartDraft =
         orderDraft.version = this.version
         orderDraft.orderNumber = this.id
     }
+
+fun View.show() {
+    this.visibility = View.VISIBLE
+}
+
+fun View.hide() {
+    this.visibility = View.GONE
+}
