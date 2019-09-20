@@ -15,12 +15,12 @@ internal abstract class AppAbstractModule {
 
     @Binds
     @Singleton
-    abstract fun provideProductRpository(productRepositoryImpl: ProductRepositoryImpl): ProductRepository
+    abstract fun provideProductRepository(productRepositoryImpl: ProductRepositoryImpl): ProductRepository
 
 
     @Binds
     @Singleton
-    abstract fun provideCustomerRpository(customerRepositoryImpl: CustomerRepositoryImpl): CustomerRepository
+    abstract fun provideCustomerRepository(customerRepositoryImpl: CustomerRepositoryImpl): CustomerRepository
 
     @Binds
     @Singleton

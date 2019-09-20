@@ -20,33 +20,33 @@ internal class AppModule {
 
     @Provides
     @Singleton
-    fun getHttpClient(): VrapHttpClient = VrapOkhttpClient()
+    fun provideHttpClient(): VrapHttpClient = VrapOkhttpClient()
 
     @Provides
     @Singleton
     @Named("client_id")
-    fun getClientId(): String = "vlpXbEFrcRN25J_yxKE0n9M6"
+    fun provideClientId(): String = "vlpXbEFrcRN25J_yxKE0n9M6"
 
     @Provides
     @Singleton
     @Named("client_secret")
-    fun getClientSecret(): String = "Z_3BH5aqyAS-LcSKlKcRzXNoSyXkRsv3"
+    fun provideClientSecret(): String = "Z_3BH5aqyAS-LcSKlKcRzXNoSyXkRsv3"
 
     @Provides
     @Singleton
     @Named("project_key")
-    fun getProjectKey(): String = "spati-mc"
+    fun provideProjectKey(): String = "spati-mc"
 
     @Provides
     @Singleton
     @Named("scopes")
-    fun getScopes(
+    fun provideScopes(
         @Named("project_key") project_key: String
     ): String = "manage_project:$project_key"
 
     @Provides
     @Singleton
-    fun getApiRoot(
+    fun provideApiRoot(
         vrapHttpClient: VrapHttpClient,
         @Named("client_id") client_id: String,
         @Named("client_secret") client_secret: String,
