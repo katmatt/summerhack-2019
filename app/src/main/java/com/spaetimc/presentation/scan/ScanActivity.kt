@@ -82,9 +82,7 @@ class ScanActivity : AppCompatActivity(), ScanContract.ScanView, ZXingScannerVie
             .also { it.putExtra("orderNumber", orderNumber) }
             .let { intent -> startActivity(intent) }
 
-    override fun updateProductList(productList: List<AppProduct>) {
-        productListAdapter.updateList(productList)
-    }
+    override fun updateProductList(productList: List<AppProduct>) = productListAdapter.updateList(productList)
 
     override fun showMessage(message: String?): Unit = Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 

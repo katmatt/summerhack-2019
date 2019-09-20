@@ -1,5 +1,6 @@
 package com.spaetimc.data.order
 
+import androidx.annotation.VisibleForTesting
 import com.commercetools.models.cart.Cart
 import com.commercetools.models.cart.CartDraftImpl
 import com.commercetools.models.cart.TaxMode
@@ -27,8 +28,8 @@ class OrderRepositoryImpl @Inject constructor(
                     .executeBlocking()
                     .body
             }
-
-    override fun createCart(customer: Customer, appProducts: List<AppProduct>): Single<Cart> = Single
+    @VisibleForTesting
+    fun createCart(customer: Customer, appProducts: List<AppProduct>): Single<Cart> = Single
         .just(
             AddressImpl().also { address ->
                 address.city = "BERLIN"

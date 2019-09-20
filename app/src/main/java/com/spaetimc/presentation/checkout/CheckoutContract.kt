@@ -4,8 +4,18 @@ import com.spaetimc.presentation.BasePresenter
 
 interface CheckoutContract {
 
-    interface CheckoutView
+    interface CheckoutView {
 
-    interface CheckoutPresenter : BasePresenter
+        fun doOnBackPressed()
+
+        fun initViews()
+
+    }
+
+    interface CheckoutPresenter : BasePresenter {
+
+        fun handleBackPressed()
+
+    }
 
 }

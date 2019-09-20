@@ -2,14 +2,13 @@ package com.spaetimc
 
 import com.commercetools.models.customer.Customer
 import com.spaetimc.di.DaggerTestComponent
-import com.spaetimc.presentation.scan.model.AppProduct
-import org.junit.Test
-
+import com.spaetimc.di.TestComponent
 import org.junit.Assert.*
+import org.junit.Test
 
 class GetCustomerTest {
 
-    val testComponent = DaggerTestComponent.create()
+    private val testComponent: TestComponent = DaggerTestComponent.create()
 
     @Test
     fun testMainCustomer() {

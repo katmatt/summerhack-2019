@@ -8,8 +8,10 @@ class CheckoutPresenter @Inject constructor(
     private val compositeDisposable: CompositeDisposable
 ) : CheckoutContract.CheckoutPresenter {
 
-    override fun start() = Unit
+    override fun start() = checkoutView.initViews()
 
     override fun stop() = compositeDisposable.dispose()
+
+    override fun handleBackPressed() = checkoutView.doOnBackPressed()
 
 }

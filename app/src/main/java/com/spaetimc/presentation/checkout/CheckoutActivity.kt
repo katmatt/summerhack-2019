@@ -19,15 +19,19 @@ class CheckoutActivity : AppCompatActivity(), CheckoutContract.CheckoutView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_checkout)
 
-        checkoutText.text = "Your order with the number $orderNumber has successfully been set."
-        backButton.setOnClickListener { onBackPressed() }
-
         checkoutPresenter.start()
+    }
+
+    override fun initViews() {
+        checkoutText.text = "Your order with the number $orderNumber has successfully been set."
+        backButton.setOnClickListener { checkoutPresenter.handleBackPressed() }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         checkoutPresenter.stop()
     }
+
+    override fun doOnBackPressed() = onBackPressed()
 
 }
