@@ -32,7 +32,6 @@ class ScanPresenter
     }
 
     private lateinit var barcodeStream: PublishProcessor<String>
-    private val EMPTY_PRODUCT = AppProduct(name = "EMPTY_PRODUCT",createdAt = 0,pictureUrl = "",description = "empty_product",amount = 0,barcode = "",priceInCent = 0)
 
     override fun start() = with(scanView) {
         requestPermissions()
@@ -48,41 +47,33 @@ class ScanPresenter
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .flatMapMaybe { scanProductUseCase.getProduct(it).defaultIfEmpty(EMPTY_PRODUCT) }
-            .subscribeBy(
-                onNext = {
-                    println(it)
-                    scanView.showProgress()
-                    if (it === EMPTY_PRODUCT) {
-                        handleNoProductFound()
-                    } else {
-                        handleScannedProduct(it)
-                    }
-                    scanView.hideProgress()
-                    scanView.reStartCamera()
-                },
-                onError = {
-                    handleScanError(it)
-                }
-            )
+            .subscribeBy(onNext = ::handleScannedProduct, onError = ::handleScanError)
             .addTo(compositeDisposable)
     }
 
     override fun handleNewBarcode(barcode: Result?) {
-        barcode?.text?.let {
-            barcodeStream.onNext(it)
-        }
+        barcode?.text?.let { barcodeStream.onNext(it) }
     }
 
     private fun handleScannedProduct(product: AppProduct) {
+        Log.d(TAG, product.toString())
+        scanView.showProgress()
+
+        if (product === EMPTY_PRODUCT) handleNoProductFound()
+        else handleProductFound(product)
+
+        scanView.hideProgress()
+        scanView.reStartCamera()
+    }
+
+    private fun handleProductFound(product: AppProduct) {
         productList = when (val productInList = productList.find { it.barcode == product.barcode }) {
             null -> productList + product
             else -> changeAmountOf(productInList, withOperation = Int::plus)
         }
     }
 
-    private fun handleNoProductFound() = with(scanView) {
-        showMessage("Sorry, no product found for this barcode.")
-    }
+    private fun handleNoProductFound() = scanView.showMessage("Sorry, no product found for this barcode.")
 
     private fun handleScanError(throwable: Throwable) = with(scanView) {
         Log.d(TAG, throwable.message ?: "Message missing")
@@ -133,6 +124,16 @@ class ScanPresenter
 
     companion object {
         private const val TAG = "ScanPresenter"
+
+        private val EMPTY_PRODUCT = AppProduct(
+            name = "EMPTY_PRODUCT",
+            createdAt = 0,
+            pictureUrl = "",
+            description = "empty_product",
+            amount = 0,
+            barcode = "",
+            priceInCent = 0
+        )
     }
 
 }
