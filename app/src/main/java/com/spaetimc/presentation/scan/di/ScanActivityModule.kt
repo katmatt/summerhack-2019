@@ -2,6 +2,7 @@ package com.spaetimc.presentation.scan.di
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.spaetimc.data.ProductRepository
+import com.spaetimc.di.ActivityScope
 import com.spaetimc.domain.CheckoutUseCase
 import com.spaetimc.domain.checkout.CheckoutUseCaseImpl
 import com.spaetimc.domain.ScanProductUseCase
@@ -15,31 +16,42 @@ import dagger.Provides
 import io.reactivex.disposables.CompositeDisposable
 
 @Module
+
 class ScanActivityModule {
 
     @Provides
+    @ActivityScope
     fun provideScanPresenter(
         scanActivity: ScanActivity,
         scanProductUseCase: ScanProductUseCase,
         checkoutUseCase: CheckoutUseCase,
         compositeDisposable: CompositeDisposable
-    ): ScanContract.ScanPresenter = ScanPresenter(scanActivity, scanProductUseCase, checkoutUseCase, compositeDisposable)
+    ): ScanPresenter = ScanPresenter(scanActivity, scanProductUseCase, checkoutUseCase, compositeDisposable)
 
     @Provides
+    @ActivityScope
+    fun provideScannerContract(scannerPresenter: ScanPresenter):ScanContract.ScanPresenter = scannerPresenter
+
+    @Provides
+    @ActivityScope
     fun provideScanView(scanActivity: ScanActivity): ScanContract.ScanView = scanActivity
 
     @Provides
+    @ActivityScope
     fun provideScanProductUseCase(productRepository: ProductRepository): ScanProductUseCase =
         ScanProductUseCaseImpl(productRepository)
 
     @Provides
+    @ActivityScope
     fun provideScanCheckoutUseCase(checkoutUseCaseImpl: CheckoutUseCaseImpl): CheckoutUseCase =
         checkoutUseCaseImpl
 
     @Provides
+    @ActivityScope
     fun provideLinearLayoutManager(scanActivity: ScanActivity) = LinearLayoutManager(scanActivity)
 
     @Provides
+    @ActivityScope
     fun provideProductListAdapterCallback(scanPresenter: ScanPresenter): ProductListListener = scanPresenter
 
 }
