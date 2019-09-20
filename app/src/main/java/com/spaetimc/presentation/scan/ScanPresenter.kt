@@ -1,5 +1,6 @@
 package com.spaetimc.presentation.scan
 
+import com.commercetools.models.order.Order
 import com.google.zxing.Result
 import com.spaetimc.domain.CheckoutUseCase
 import com.spaetimc.domain.ScanProductUseCase
@@ -91,23 +92,22 @@ class ScanPresenter
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                    onSuccess = {
-                        with(scanView) {
-                            hideProgress()
-                            showCheckoutScreen(it.orderNumber)
-                        }
-                        cancelOrder()
-                    },
-                    onError = {
-                        with(scanView) {
-                            hideProgress()
-                            showMessage("Something went wrong, try again.")
-                        }
-                    }
+                    onSuccess = this::handleSuccessfulOrder,
+                    onError = this::handleCheckoutError
                 )
                 .addTo(compositeDisposable)
         }
     }
+
+    private fun handleCheckoutError(it: Throwable) = with(scanView) {
+        hideProgress()
+        showMessage("Something went wrong, try again.")
+    }
+
+    private fun handleSuccessfulOrder(order: Order) = with(scanView) {
+        hideProgress()
+        showCheckoutScreen(order.orderNumber)
+    }.also { cancelOrder() }
 
     override fun cancelOrder() {
         productList = emptyList()
