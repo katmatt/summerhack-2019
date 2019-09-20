@@ -30,6 +30,7 @@ class ScanPresenter
     }
 
     override fun start() = with(scanView) {
+        requestPermissions()
         initializeProductList()
         initOnClickListeners()
     }
