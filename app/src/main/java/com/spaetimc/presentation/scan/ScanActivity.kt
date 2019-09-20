@@ -69,7 +69,7 @@ class ScanActivity : AppCompatActivity(), ScanContract.ScanView, ZXingScannerVie
     }
 
     override fun updateTotalPrice(centAmount: Int) {
-        totalView.text = "Total ${centAmount.format()}€"
+        totalView.text = "Σ ${centAmount.format()}€"
     }
 
     override fun initOnClickListeners() {
