@@ -4,13 +4,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.spaetimc.data.ProductRepository
 import com.spaetimc.di.ActivityScope
 import com.spaetimc.domain.CheckoutUseCase
-import com.spaetimc.domain.checkout.CheckoutUseCaseImpl
 import com.spaetimc.domain.ScanProductUseCase
+import com.spaetimc.domain.checkout.CheckoutUseCaseImpl
 import com.spaetimc.domain.scan.ScanProductUseCaseImpl
 import com.spaetimc.presentation.scan.ScanActivity
 import com.spaetimc.presentation.scan.ScanContract
 import com.spaetimc.presentation.scan.ScanPresenter
-import com.spaetimc.presentation.scan.productlist.ProductListListener
+import com.spaetimc.presentation.scan.productlist.ProductListAdapterCallback
 import dagger.Module
 import dagger.Provides
 import io.reactivex.disposables.CompositeDisposable
@@ -30,7 +30,7 @@ class ScanActivityModule {
 
     @Provides
     @ActivityScope
-    fun provideScannerContract(scannerPresenter: ScanPresenter):ScanContract.ScanPresenter = scannerPresenter
+    fun provideScanContractPresenter(scannerPresenter: ScanPresenter): ScanContract.ScanPresenter = scannerPresenter
 
     @Provides
     @ActivityScope
@@ -52,6 +52,10 @@ class ScanActivityModule {
 
     @Provides
     @ActivityScope
-    fun provideProductListAdapterCallback(scanPresenter: ScanPresenter): ProductListListener = scanPresenter
+    fun provideProductListAdapterCallback(scanPresenter: ScanPresenter): ProductListAdapterCallback =
+        ProductListAdapterCallback(
+            onPlusButtonClicked = scanPresenter::onPlusButtonClicked,
+            onMinusButtonClicked = scanPresenter::onMinusButtonClicked
+        )
 
 }

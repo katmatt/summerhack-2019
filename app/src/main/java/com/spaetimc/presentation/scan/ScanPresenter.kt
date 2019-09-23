@@ -6,7 +6,6 @@ import com.google.zxing.Result
 import com.spaetimc.domain.CheckoutUseCase
 import com.spaetimc.domain.ScanProductUseCase
 import com.spaetimc.presentation.scan.model.AppProduct
-import com.spaetimc.presentation.scan.productlist.ProductListListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.processors.PublishProcessor
@@ -17,13 +16,12 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
-class ScanPresenter
-@Inject constructor(
+class ScanPresenter @Inject constructor(
     private val scanView: ScanContract.ScanView,
     private val scanProductUseCase: ScanProductUseCase,
     private val checkoutUseCase: CheckoutUseCase,
     private val compositeDisposable: CompositeDisposable
-) : ScanContract.ScanPresenter, ProductListListener {
+) : ScanContract.ScanPresenter {
 
     private var productList by Delegates.observable(emptyList<AppProduct>()) { _, _, newProductList ->
         scanView.updateProductList(newProductList.sortedByDescending { it.createdAt })
@@ -85,11 +83,11 @@ class ScanPresenter
             .filterNot { it.barcode == product.barcode }
             .plus(product.copy(amount = product.amount.withOperation(1)))
 
-    override fun onPlusButtonClicked(product: AppProduct) {
+    fun onPlusButtonClicked(product: AppProduct) {
         productList = changeAmountOf(product, withOperation = Int::plus)
     }
 
-    override fun onMinusButtonClicked(product: AppProduct) {
+    fun onMinusButtonClicked(product: AppProduct) {
         productList =
             if (product.amount <= 1) productList - product
             else changeAmountOf(product, withOperation = Int::minus)

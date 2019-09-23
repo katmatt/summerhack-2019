@@ -16,7 +16,7 @@ import javax.inject.Inject
 import kotlin.properties.Delegates
 
 class ProductListAdapter @Inject constructor(
-    private val productListListener: ProductListListener
+    private val productListCallback: ProductListAdapterCallback
 ) : RecyclerView.Adapter<ProductListAdapter.ViewHolder>() {
 
     var productList by Delegates.observable(emptyList<AppProduct>()) { _, _, _ -> notifyDataSetChanged() }
@@ -47,8 +47,8 @@ class ProductListAdapter @Inject constructor(
         productName.text = productList[position].name
         productDescription.text = productList[position].description
         productPrice.text = productList[position].priceInCent.format()
-        plusButton.setOnClickListener { productListListener.onPlusButtonClicked(productList[position]) }
-        minusButton.setOnClickListener { productListListener.onMinusButtonClicked(productList[position]) }
+        plusButton.setOnClickListener { productListCallback.onPlusButtonClicked(productList[position]) }
+        minusButton.setOnClickListener { productListCallback.onMinusButtonClicked(productList[position]) }
         productCounter.text = productList[position].amount.toString()
     }
 
