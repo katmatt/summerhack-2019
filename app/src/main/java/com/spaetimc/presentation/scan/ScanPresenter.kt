@@ -6,21 +6,17 @@ import com.google.zxing.Result
 import com.spaetimc.domain.CheckoutUseCase
 import com.spaetimc.domain.ScanProductUseCase
 import com.spaetimc.presentation.scan.model.AppProduct
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.processors.PublishProcessor
-import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
 class ScanPresenter @Inject constructor(
     private val scanView: ScanContract.ScanView,
     private val scanProductUseCase: ScanProductUseCase,
-    private val checkoutUseCase: CheckoutUseCase,
-    private val compositeDisposable: CompositeDisposable
+    private val checkoutUseCase: CheckoutUseCase
 ) : ScanContract.ScanPresenter {
 
     private var productList by Delegates.observable(emptyList<AppProduct>()) { _, _, newProductList ->
@@ -29,35 +25,30 @@ class ScanPresenter @Inject constructor(
         scanView.updateTotalPrice(totalPriceInCent)
     }
 
-    private lateinit var barcodeStream: PublishProcessor<String>
-
     override fun start() = with(scanView) {
         requestPermissions()
         initializeProductList()
         initOnClickListeners()
-        initialiseCodeBarStream()
-    }
-
-    private fun initialiseCodeBarStream() {
-        barcodeStream = PublishProcessor.create()
-        barcodeStream
-            .debounce(1, TimeUnit.SECONDS)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .flatMapMaybe { scanProductUseCase.getProduct(it).defaultIfEmpty(EMPTY_PRODUCT) }
-            .subscribeBy(onNext = ::handleScannedProduct, onError = ::handleScanError)
-            .addTo(compositeDisposable)
     }
 
     override fun handleNewBarcode(barcode: Result?) {
-        barcode?.text?.let { barcodeStream.onNext(it) }
+        barcode?.text?.let { barcode -> getProductFrom(barcode) }
     }
 
-    private fun handleScannedProduct(product: AppProduct) {
+    private fun getProductFrom(barcode: String) = GlobalScope.launch(Dispatchers.Main) {
+        val product = async(Dispatchers.IO) { scanProductUseCase.getProduct(barcode) }
+        try {
+            handleScannedProduct(product.await())
+        } catch (t: Throwable) {
+            handleScanError(t)
+        }
+    }
+
+    private fun handleScannedProduct(product: AppProduct?) {
         Log.d(TAG, product.toString())
         scanView.showProgress()
 
-        if (product === EMPTY_PRODUCT) handleNoProductFound()
+        if (product === null) handleNoProductFound()
         else handleProductFound(product)
 
         scanView.hideProgress()
@@ -93,15 +84,17 @@ class ScanPresenter @Inject constructor(
             else changeAmountOf(product, withOperation = Int::minus)
     }
 
-    override fun checkout() =
+    override fun checkout() {
         if (productList.isEmpty()) scanView.showMessage("Can't checkout an empty cart")
-        else scanView.showProgress().also {
-            checkoutUseCase.checkout(productList)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = ::handleSuccessfulOrder, onError = ::handleCheckoutError)
-                .addTo(compositeDisposable)
+        else GlobalScope.launch(Dispatchers.Main) {
+            val order = async(Dispatchers.IO) { checkoutUseCase.checkout(productList) }
+            try {
+                handleSuccessfulOrder(order.await())
+            } catch (t: Throwable) {
+                handleCheckoutError(t)
+            }
         }
+    }
 
     private fun handleSuccessfulOrder(order: Order) = with(scanView) {
         hideProgress()
@@ -118,7 +111,7 @@ class ScanPresenter @Inject constructor(
         productList = emptyList()
     }
 
-    override fun stop() = compositeDisposable.dispose()
+    override fun stop() = Unit
 
     companion object {
         private const val TAG = "ScanPresenter"

@@ -4,7 +4,6 @@ import com.commercetools.client.ApiRoot
 import com.spaetimc.utils.AppProject
 import dagger.Module
 import dagger.Provides
-import io.reactivex.disposables.CompositeDisposable
 import io.vrap.rmf.base.client.VrapHttpClient
 import io.vrap.rmf.base.client.middlewares.HttpMiddleware
 import io.vrap.rmf.base.client.oauth2.ClientCredentialsTokenSupplier
@@ -14,9 +13,6 @@ import javax.inject.Singleton
 
 @Module
 internal class AppModule {
-
-    @Provides
-    fun provideCompositeDisposables() = CompositeDisposable()
 
     @Provides
     @Singleton

@@ -1,16 +1,14 @@
 package com.spaetimc.presentation.checkout
 
-import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 class CheckoutPresenter @Inject constructor(
-    private val checkoutView: CheckoutContract.CheckoutView,
-    private val compositeDisposable: CompositeDisposable
+    private val checkoutView: CheckoutContract.CheckoutView
 ) : CheckoutContract.CheckoutPresenter {
 
     override fun start() = checkoutView.initViews()
 
-    override fun stop() = compositeDisposable.dispose()
+    override fun stop() = Unit
 
     override fun handleBackPressed() = checkoutView.doOnBackPressed()
 
