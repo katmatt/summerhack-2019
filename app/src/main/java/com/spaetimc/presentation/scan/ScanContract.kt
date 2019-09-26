@@ -30,7 +30,7 @@ interface ScanContract {
 
         fun cancelOrder()
 
-        fun handleNewBarcode(barcode: Result?)
+        fun handleNewBarcode(barcode: Result)
 
     }
 
