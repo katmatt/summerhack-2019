@@ -80,7 +80,9 @@ class ScanActivity : AppCompatActivity(), ScanContract.ScanView, ZXingScannerVie
         cancelButton.setOnClickListener { scanPresenter.cancelOrder() }
     }
 
-    override fun handleResult(barcode: Result?) = scanPresenter.handleNewBarcode(barcode)
+    override fun handleResult(barcode: Result?) {
+        barcode?.let { scanPresenter.handleNewBarcode(it) }
+    }
 
     override fun reStartCamera() = scannerView.resumeCameraPreview(this)
 

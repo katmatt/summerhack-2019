@@ -1,10 +1,10 @@
 package com.spaetimc.data
 
+import arrow.core.Option
 import com.spaetimc.presentation.scan.model.AppProduct
-import io.reactivex.Maybe
 
 interface ProductRepository {
 
-    fun getAppProduct(barCode: String): Maybe<AppProduct>
+    suspend fun getAppProduct(barCode: String): Option<AppProduct>
 
 }

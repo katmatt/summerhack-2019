@@ -13,10 +13,9 @@ import com.spaetimc.presentation.scan.ScanPresenter
 import com.spaetimc.presentation.scan.productlist.ProductListAdapterCallback
 import dagger.Module
 import dagger.Provides
-import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.Job
 
 @Module
-
 class ScanActivityModule {
 
     @Provides
@@ -25,8 +24,8 @@ class ScanActivityModule {
         scanActivity: ScanActivity,
         scanProductUseCase: ScanProductUseCase,
         checkoutUseCase: CheckoutUseCase,
-        compositeDisposable: CompositeDisposable
-    ): ScanPresenter = ScanPresenter(scanActivity, scanProductUseCase, checkoutUseCase, compositeDisposable)
+        job: Job
+    ): ScanPresenter = ScanPresenter(scanActivity, scanProductUseCase, checkoutUseCase, job)
 
     @Provides
     @ActivityScope
