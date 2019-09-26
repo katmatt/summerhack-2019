@@ -1,6 +1,9 @@
 package com.spaetimc.presentation.scan
 
 import android.util.Log
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.Some
 import com.commercetools.models.order.Order
 import com.google.zxing.Result
 import com.spaetimc.domain.CheckoutUseCase
@@ -43,11 +46,13 @@ class ScanPresenter @Inject constructor(
         handleScannedProduct(product)
     }
 
-    private fun handleScannedProduct(product: AppProduct?) {
+    private fun handleScannedProduct(product: Option<AppProduct>) {
         Log.d(TAG, product.toString())
 
-        if (product === null) handleNoProductFound()
-        else handleProductFound(product)
+        when (product) {
+            is Some -> handleProductFound(product.t)
+            is None -> handleNoProductFound()
+        }
 
         scanView.hideProgress()
         scanView.reStartCamera()

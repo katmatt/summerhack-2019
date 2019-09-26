@@ -52,6 +52,11 @@ dependencies {
 
     implementation 'me.dm7.barcodescanner:zxing:1.9'
 
+    implementation "io.arrow-kt:arrow-fx:$arrow_version"
+    implementation "io.arrow-kt:arrow-optics:$arrow_version"
+    implementation "io.arrow-kt:arrow-syntax:$arrow_version"
+    kapt "io.arrow-kt:arrow-meta:$arrow_version"
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
