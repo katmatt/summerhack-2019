@@ -6,18 +6,20 @@ import com.google.zxing.Result
 import com.spaetimc.domain.CheckoutUseCase
 import com.spaetimc.domain.ScanProductUseCase
 import com.spaetimc.presentation.scan.model.AppProduct
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 import kotlin.properties.Delegates
 
 class ScanPresenter @Inject constructor(
     private val scanView: ScanContract.ScanView,
     private val scanProductUseCase: ScanProductUseCase,
-    private val checkoutUseCase: CheckoutUseCase
-) : ScanContract.ScanPresenter {
+    private val checkoutUseCase: CheckoutUseCase,
+    private val job: Job
+) : ScanContract.ScanPresenter, CoroutineScope {
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
 
     private var productList by Delegates.observable(emptyList<AppProduct>()) { _, _, newProductList ->
         scanView.updateProductList(newProductList.sortedByDescending { it.createdAt })
@@ -32,21 +34,17 @@ class ScanPresenter @Inject constructor(
     }
 
     override fun handleNewBarcode(barcode: Result?) {
-        barcode?.text?.let { barcode -> getProductFrom(barcode) }
+        barcode?.text?.let { getProductFrom(it) }
     }
 
-    private fun getProductFrom(barcode: String) = GlobalScope.launch(Dispatchers.Main) {
-        val product = async(Dispatchers.IO) { scanProductUseCase.getProduct(barcode) }
-        try {
-            handleScannedProduct(product.await())
-        } catch (t: Throwable) {
-            handleScanError(t)
-        }
+    private fun getProductFrom(barcode: String) = launch(coroutineContext + scanErrorHandler) {
+        scanView.showProgress()
+        val product = withContext(Dispatchers.IO) { scanProductUseCase.getProduct(barcode) }
+        handleScannedProduct(product)
     }
 
     private fun handleScannedProduct(product: AppProduct?) {
         Log.d(TAG, product.toString())
-        scanView.showProgress()
 
         if (product === null) handleNoProductFound()
         else handleProductFound(product)
@@ -62,12 +60,12 @@ class ScanPresenter @Inject constructor(
         }
     }
 
-    private fun handleNoProductFound() = scanView.showMessage("Sorry, no product found for this barcode.")
-
-    private fun handleScanError(throwable: Throwable) = with(scanView) {
-        Log.d(TAG, throwable.message ?: "Message missing")
-        showMessage("Something went wrong, try again.")
+    private val scanErrorHandler = CoroutineExceptionHandler { _, exception ->
+        scanView.hideProgress()
+        scanView.showMessage("Something went wrong, try again: ${exception.message ?: "no message"}")
     }
+
+    private fun handleNoProductFound() = scanView.showMessage("Sorry, no product found for this barcode.")
 
     private fun changeAmountOf(product: AppProduct, withOperation: Int.(Int) -> Int) =
         productList
@@ -86,13 +84,9 @@ class ScanPresenter @Inject constructor(
 
     override fun checkout() {
         if (productList.isEmpty()) scanView.showMessage("Can't checkout an empty cart")
-        else GlobalScope.launch(Dispatchers.Main) {
-            val order = async(Dispatchers.IO) { checkoutUseCase.checkout(productList) }
-            try {
-                handleSuccessfulOrder(order.await())
-            } catch (t: Throwable) {
-                handleCheckoutError(t)
-            }
+        else launch(coroutineContext + checkoutErrorHandler) {
+            val order = withContext(Dispatchers.IO) { checkoutUseCase.checkout(productList) }
+            handleSuccessfulOrder(order)
         }
     }
 
@@ -101,30 +95,19 @@ class ScanPresenter @Inject constructor(
         showCheckoutScreen(order.orderNumber)
     }.also { cancelOrder() }
 
-    private fun handleCheckoutError(throwable: Throwable) = with(scanView) {
-        Log.d(TAG, throwable.message ?: "Message missing")
-        hideProgress()
-        showMessage("Something went wrong, try again.")
+    private val checkoutErrorHandler = CoroutineExceptionHandler { _, exception ->
+        scanView.hideProgress()
+        scanView.showMessage("Something went wrong, try again: ${exception.message ?: "no message"}")
     }
 
     override fun cancelOrder() {
         productList = emptyList()
     }
 
-    override fun stop() = Unit
+    override fun stop() = job.cancel()
 
     companion object {
         private const val TAG = "ScanPresenter"
-
-        private val EMPTY_PRODUCT = AppProduct(
-            name = "EMPTY_PRODUCT",
-            createdAt = 0,
-            pictureUrl = "",
-            description = "empty_product",
-            amount = 0,
-            barcode = "",
-            priceInCent = 0
-        )
     }
 
 }

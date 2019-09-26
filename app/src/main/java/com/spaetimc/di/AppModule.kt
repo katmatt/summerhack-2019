@@ -8,11 +8,15 @@ import io.vrap.rmf.base.client.VrapHttpClient
 import io.vrap.rmf.base.client.middlewares.HttpMiddleware
 import io.vrap.rmf.base.client.oauth2.ClientCredentialsTokenSupplier
 import io.vrap.rmf.impl.okhttp.VrapOkhttpClient
+import kotlinx.coroutines.Job
 import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 internal class AppModule {
+
+    @Provides
+    fun provideJob() = Job()
 
     @Provides
     @Singleton
@@ -21,12 +25,12 @@ internal class AppModule {
     @Provides
     @Singleton
     @Named("client_id")
-    fun provideClientId(): String = "vlpXbEFrcRN25J_yxKE0n9M6"
+    fun provideClientId(): String = ""
 
     @Provides
     @Singleton
     @Named("client_secret")
-    fun provideClientSecret(): String = "Z_3BH5aqyAS-LcSKlKcRzXNoSyXkRsv3"
+    fun provideClientSecret(): String = ""
 
     @Provides
     @Singleton

@@ -13,6 +13,7 @@ import com.spaetimc.presentation.scan.ScanPresenter
 import com.spaetimc.presentation.scan.productlist.ProductListAdapterCallback
 import dagger.Module
 import dagger.Provides
+import kotlinx.coroutines.Job
 
 @Module
 class ScanActivityModule {
@@ -22,8 +23,9 @@ class ScanActivityModule {
     fun provideScanPresenter(
         scanActivity: ScanActivity,
         scanProductUseCase: ScanProductUseCase,
-        checkoutUseCase: CheckoutUseCase
-    ): ScanPresenter = ScanPresenter(scanActivity, scanProductUseCase, checkoutUseCase)
+        checkoutUseCase: CheckoutUseCase,
+        job: Job
+    ): ScanPresenter = ScanPresenter(scanActivity, scanProductUseCase, checkoutUseCase, job)
 
     @Provides
     @ActivityScope

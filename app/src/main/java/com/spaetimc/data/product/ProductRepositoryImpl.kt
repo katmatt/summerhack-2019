@@ -15,8 +15,4 @@ class ProductRepositoryImpl @Inject constructor(
         .executeBlocking()?.body?.results
         ?.firstOrNull()?.let { productToAppProduct(it) }
 
-
-    private fun getProd() = appProject.productProjections().get()
-        .executeBlocking().body.results.toList().map { it.masterVariant }
-
 }
